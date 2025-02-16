@@ -32,7 +32,7 @@ def create_example_data(session: SessionDep):
     # make the films as data representations for the db
     films = []
     for x in range(10):
-        films.append(Film(name=f"film_{x}"))
+        films.append(Film(name=f"film_{x+1}"))
     # use the session and commit them to the db
     for film in films:
         session.add(film)
