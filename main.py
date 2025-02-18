@@ -1,5 +1,6 @@
 import os
 import logging
+import traceback
 from contextlib import asynccontextmanager
 from typing import Annotated
 from fastapi import Depends, FastAPI, HTTPException, Query
@@ -18,16 +19,19 @@ class Film(SQLModel, table=True):
 db_user = os.getenv("DB_USER", "watcher")
 db_password = os.getenv("DB_PASSWORD", "T:->%I-iMQXOiqOt")
 db_name = os.getenv("DB_NAME", "filmpoc")
-instance_connection_name = os.getenv("minflix-451300:us-west2:streaming-db")
+instance_connection_name = os.getenv("INSTANCE_CONNECTION_NAME", "minflix-451300:us-west2:streaming-db")
 
 # Connection string for Cloud SQL
 database_url = f"postgresql+pg8000://{db_user}:{db_password}@/{db_name}?unix_sock=/cloudsql/{instance_connection_name}/.s.PGSQL.5432"
+logger.info(f"Using database URL: {database_url.replace(db_password, '********')}")
+
 try:
-    engine = create_engine(database_url, echo=True)
+    engine = create_engine(database_url, echo=True, pool_pre_ping=True)
     logger.info("Database engine created successfully")
 except Exception as e:
     logger.error(f"Failed to create database engine: {str(e)}")
-    raise
+    logger.error(traceback.format_exc())
+    # don't raise
 
 def get_session():
     try:
@@ -35,7 +39,8 @@ def get_session():
             yield session
     except Exception as e:
         logger.error(f"Session creation failed: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail="Database connection error")
 
 
 SessionDep = Annotated[Session, Depends(get_session)]
@@ -47,7 +52,8 @@ def create_db_and_tables():
         logger.info("Database tables created successfully")
     except Exception as e:
         logger.error(f"Failed to create tables: {str(e)}")
-        raise
+        logger.error(traceback.format_exc())
+        # don't raise
 
 
 def create_example_data(session: Session):
@@ -55,7 +61,7 @@ def create_example_data(session: Session):
         # Check if data already exists
         existing_films = session.exec(select(Film)).all()
         if existing_films:
-            logger.info("Example data already exists")
+            logger.info(f"Example data already exists, found {len(existing_films)} films")
             return
 
         # Create example films
@@ -78,19 +84,21 @@ def create_example_data(session: Session):
         logger.info("Example data created successfully")
     except Exception as e:
         logger.error(f"Failed to create example data: {str(e)}")
+        logger.error(traceback.format_exc())
         session.rollback()
-        raise
+        # Don't raise here - allow app to continue even if data can't be inserted
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # try to initialize database but continue if it fails, don't raise
     try:
         create_db_and_tables()
         with Session(engine) as session:
             create_example_data(session)
     except Exception as e:
-        logger.error(f"Startup failed: {str(e)}")
-        raise
+        logger.error(f"Startup database initialization failed: {str(e)}")
+        logger.error(traceback.format_exc())
     yield
 
 
@@ -152,6 +160,8 @@ async def health_check():
             "database": "disconnected",
             "error": str(e)
         }
+
+app = app
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
