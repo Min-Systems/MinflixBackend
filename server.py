@@ -4,6 +4,7 @@ from typing import Annotated
 from fastapi import Depends, FastAPI, HTTPException, Query
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 from fastapi.middleware.cors import CORSMiddleware
+import uvicon
 
 
 class Film(SQLModel, table=True):
@@ -75,3 +76,15 @@ app.add_middleware(
 def read_all_films(session: SessionDep, offset: int = 0):
     films = session.exec(select(Film).offset(offset)).all()
     return films
+
+@app.get("/")
+async def root():
+    return {"message": "MinFlix Backend is running"}
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8080))
+    uvicorn.run(app, host="0.0.0.0", port=port)
