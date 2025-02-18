@@ -107,7 +107,7 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["origins"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -118,29 +118,40 @@ app.add_middleware(
 async def read_all_films(session: SessionDep):
     try:
         films = session.exec(select(Film)).all()
-        if not films:
-            logger.warning("No films found in database")
-            return []
         logger.info(f"Retrieved {len(films)} films")
         return films
     except Exception as e:
         logger.error(f"Error retrieving films: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail="Failed to retrieve films from database")
+        
 @app.get("/")
 async def root():
     return {"message": "MinFlix Backend is running"}
+
+@app.get("/test-cors")
+async def test_cors():
+    return {"message": "CORS is working!"}
 
 @app.get("/health")
 async def health_check():
     try:
         # Test database connection
         with Session(engine) as session:
-            session.exec(select(Film)).first()
-        return {"status": "healthy", "database": "connected"}
+            film_count = session.exec(select(Film)).count()
+            return {
+                "status": "healthy",
+                "database": "connected",
+                "film_count": film_count
+            }
     except Exception as e:
         logger.error(f"Health check failed: {str(e)}")
-        return {"status": "unhealthy", "database": str(e)}
+        logger.error(traceback.format_exc())
+        return {
+            "status": "unhealthy",
+            "database": "disconnected",
+            "error": str(e)
+        }
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
