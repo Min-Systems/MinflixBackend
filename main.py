@@ -1,10 +1,11 @@
 import os
+import logging
 from contextlib import asynccontextmanager
 from typing import Annotated
 from fastapi import Depends, FastAPI, HTTPException, Query
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 from fastapi.middleware.cors import CORSMiddleware
-import uvicon
+import uvicorn
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -14,13 +15,13 @@ class Film(SQLModel, table=True):
     name: str
 
 
-db_user = os.getenv("watcher")
-db_password = os.getenv("T:->%I-iMQXOiqOt")
+db_user = os.getenv("DB_USER", "watcher")
+db_password = os.getenv("DB_PASSWORD", "T:->%I-iMQXOiqOt")
 db_name = os.getenv("DB_NAME", "filmpoc")
 instance_connection_name = os.getenv("minflix-451300:us-west2:streaming-db")
 
 # Connection string for Cloud SQL
-url_postgresql = f"postgresql+pg8000://{db_user}:{db_password}@/{db_name}?unix_sock=/cloudsql/{instance_connection_name}/.s.PGSQL.5432"
+database_url = f"postgresql+pg8000://{db_user}:{db_password}@/{db_name}?unix_sock=/cloudsql/{instance_connection_name}/.s.PGSQL.5432"
 try:
     engine = create_engine(database_url, echo=True)
     logger.info("Database engine created successfully")
@@ -101,12 +102,12 @@ origins = [
     "https://localhost.tiangolo.com",
     "http://127.0.0.1",
     "http://127.0.0.1:8000",
-    "https://minflixhd.web.app/"
+    "https://minflixhd.web.app"
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["origins"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
