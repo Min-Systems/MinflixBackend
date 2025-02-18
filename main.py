@@ -6,16 +6,18 @@ from sqlmodel import Field, Session, SQLModel, create_engine, select
 from fastapi.middleware.cors import CORSMiddleware
 import uvicon
 
-
 class Film(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     name: str
 
 
-db_postgresql = "filmpoc"
-user_postgresql = "watcher"
-password_postgresql = "films"
-url_postgresql = f"postgresql://{user_postgresql}:{password_postgresql}@localhost/{db_postgresql}"
+db_user = os.getenv("postgres")
+db_password = os.getenv("T:->%I-iMQXOiqOt")
+db_name = os.getenv("DB_NAME", "filmpoc")
+instance_connection_name = os.getenv("minflix-451300:us-west2:streaming-db")
+
+# Connection string for Cloud SQL
+url_postgresql = f"postgresql+pg8000://{db_user}:{db_password}@/{db_name}?unix_sock=/cloudsql/{instance_connection_name}/.s.PGSQL.5432"
 engine = create_engine(url_postgresql, echo=True)
 
 
