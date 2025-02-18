@@ -59,6 +59,7 @@ origins = [
     "https://localhost.tiangolo.com",
     "http://127.0.0.1",
     "http://127.0.0.1:8000",
+    "https://minflixhd.web.app/"
 ]
 
 app.add_middleware(
