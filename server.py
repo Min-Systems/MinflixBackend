@@ -1,3 +1,4 @@
+import os
 from contextlib import asynccontextmanager
 from typing import Annotated
 from fastapi import Depends, FastAPI, HTTPException, Query
@@ -42,9 +43,11 @@ def create_example_data(session: SessionDep):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    create_db_and_tables()
-    with Session(engine) as session:
-        create_example_data(session)
+    setup_db = os.environ.get("SETUPDB")
+    if setup_db == "True":
+        create_db_and_tables()
+        with Session(engine) as session:
+            create_example_data(session)
     yield
 
 
