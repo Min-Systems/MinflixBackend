@@ -13,6 +13,9 @@ class Film(SQLModel, table=True):
     film_cast: List["FilmCast"] = Relationship(back_populates="film")
     production_team: List["FilmProductionTeam"] = Relationship(back_populates="film")
 
+    class Config:
+        table_args = {"extend_existing": True}
+
 
 # The FilmCast Table (Subtable of Film)
 class FilmCast(SQLModel, table=True):

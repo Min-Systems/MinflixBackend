@@ -8,6 +8,7 @@ class Film(SQLModel, table=True):
     length: int
     technical_location: str
     producer: str
+    name: Optional[str] = None  # Added for backward compatibility
 
     # Relationships
     film_cast: List["FilmCast"] = Relationship(back_populates="film")
@@ -55,11 +56,11 @@ class FilmRead(SQLModel):
     length: int
     technical_location: str
     producer: str
+    name: Optional[str] = None  # Added for backward compatibility
     # Nested FilmCast data
     film_cast: List[FilmCastRead]
     # Nested Production data
     production_team: List[FilmProductionTeamRead]
 
     class Config:
-        # Enables serialization from ORM objects
-        orm_mode = True  
+        orm_mode = True
