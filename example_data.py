@@ -1,4 +1,5 @@
-from models import *
+from user_models import *
+from film_models import *
 
 EXAMPLEFILMS = [
             Film(
@@ -204,36 +205,3 @@ EXAMPLEUSERS = [
         ]
     ) 
 ]
-
-'''
-# Sample data
-example_users = [
-    FilmUser(id=1, email="user1@example.com", password="securepassword1", date_registered="2023"),
-    FilmUser(id=2, email="user2@example.com", password="securepassword2", date_registered="2024"),
-]
-
-example_profiles = [
-    Profile(id=1, userid=1, displayname="FilmUser1_Profile1"),
-    Profile(id=2, userid=2, displayname="FilmUser2_Profile1"),
-]
-
-example_search_history = [
-    SearchHistory(id=1, profileid=1, film_id=1, search_query="Action Movies"),
-    SearchHistory(id=2, profileid=2, film_id=3, search_query="Romantic Comedies"),
-]
-
-example_favorites = [
-    Favorite(id=1, profileid=1, film_id=2, favorited_date="2022"),
-    Favorite(id=2, profileid=2, film_id=4, favorited_date="2021"),
-]
-
-example_watch_later = [
-    WatchLater(id=1, profileid=1, film_id=5, dateadded="2023"),
-    WatchLater(id=2, profileid=2, film_id=1, dateadded="2022"),
-]
-
-example_watch_history = [
-    WatchHistory(id=1, profileid=1, film_id=3, timestamp=3600, completion=100.0, datewatched="2020"),
-    WatchHistory(id=2, profileid=2, film_id=2, timestamp=1800, completion=50.0, datewatched="2021"),
-]
-'''

@@ -1,12 +1,12 @@
 import os
 from contextlib import asynccontextmanager
 from typing import Annotated, List
-from fastapi import Depends, FastAPI 
+from fastapi import Depends, FastAPI, Response
 from sqlmodel import Session, SQLModel, create_engine, select, Relationship
 from sqlalchemy.orm import selectinload
 from fastapi.middleware.cors import CORSMiddleware
-from models import *
 from film_models import *
+from user_models import *
 from example_data import *
 
 
@@ -30,8 +30,8 @@ def create_db_and_tables():
 
 
 def create_example_data(session: SessionDep):
-    for film in EXAMPLEFILMS:
-        session.add(film)
+    #for film in EXAMPLEFILMS:
+    #    session.add(film)
     for user in EXAMPLEUSERS:
         session.add(user)
     session.commit()
@@ -77,7 +77,8 @@ def read_all_films(session: SessionDep):
 
 
 @app.get("/users")
-def read_all_users(session: SessionDep, response_model=List[FilmUserRead]):
+def read_all_users(session: SessionDep):
+    '''
     statement = select(FilmUser).options(
         selectinload(FilmUser.profiles).selectinload(Profile.search_history),
         selectinload(FilmUser.profiles).selectinload(Profile.favorites),
@@ -86,3 +87,22 @@ def read_all_users(session: SessionDep, response_model=List[FilmUserRead]):
     )
     users = session.exec(statement).all()
     return users
+    '''
+    statement = select(FilmUser)
+    users = session.exec(statement).all()
+
+    data = ""
+    for user in users:
+        data += f"id: {user.id}, email: {user.email}, password: {user.password} + date_registered: {user.date_registered}\n"
+        for profile in user.profiles:
+            data += f"displayname: {profile.displayname}\n"
+            for search in profile.search_history:
+                data += f"search_query: {search.search_query}\n"
+            for favorite in profile.favorites:
+                data += f"favorite: {favorite.favorited_date} film_id: {favorite.film_id}\n"
+            for watchlater in profile.watch_later:
+                data += f"dateadded: {watchlater.dateadded} film_id: {watchlater.film_id}\n"
+            for watchhistory in profile.watch_history:
+                data += f"datewatched: {watchhistory.datewatched} film_id: {watchlater.film_id}\n"
+
+    return Response(content=data)
