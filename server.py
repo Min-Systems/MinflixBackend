@@ -78,16 +78,6 @@ def read_all_films(session: SessionDep):
 
 @app.get("/users")
 def read_all_users(session: SessionDep):
-    '''
-    statement = select(FilmUser).options(
-        selectinload(FilmUser.profiles).selectinload(Profile.search_history),
-        selectinload(FilmUser.profiles).selectinload(Profile.favorites),
-        selectinload(FilmUser.profiles).selectinload(Profile.watch_later),
-        selectinload(FilmUser.profiles).selectinload(Profile.watch_history),
-    )
-    users = session.exec(statement).all()
-    return users
-    '''
     statement = select(FilmUser)
     users = session.exec(statement).all()
 
