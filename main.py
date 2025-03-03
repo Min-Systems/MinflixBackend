@@ -7,6 +7,9 @@ from fastapi import Depends, FastAPI, Response, HTTPException
 from sqlmodel import Session, SQLModel, create_engine, select
 from sqlalchemy.orm import selectinload
 from fastapi.middleware.cors import CORSMiddleware
+from user_models import *
+from film_models import *
+from example_data import *
 import uvicorn
 
 # Set up detailed logging
@@ -16,11 +19,13 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+'''
 # Define a simple Film model that matches main.py
 # This is for backward compatibility
 class Film(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     name: str
+'''
 
 # Import the rest of the models afterward to prevent import errors
 from sqlmodel import Field
@@ -64,6 +69,7 @@ def create_db_and_tables():
         logger.error(f"Failed to create tables: {str(e)}")
         logger.error(traceback.format_exc())
 
+'''
 def create_example_data(session: Session):
     try:
         # Check if data already exists
@@ -89,6 +95,23 @@ def create_example_data(session: Session):
         logger.error(f"Failed to create example data: {str(e)}")
         logger.error(traceback.format_exc())
         session.rollback()
+'''
+
+def create_example_data(session: SessionDep):
+    existing_films = session.exec(select(Film)).all()
+    if existing_films:
+        print("films already exist")
+    else:
+        for film in EXAMPLEFILMS:
+            session.add(film)
+    existing_users = session.exec(select(FilmUser)).all()
+    if existing_users:
+        print("useres already exist")
+    else:
+        for user in EXAMPLEUSERS:
+            session.add(user)
+    session.commit()
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -105,14 +128,15 @@ app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://minflixhd.web.app", "http://localhost:3000", "http://localhost:5173"],
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["Content-Type", "Authorization"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-@app.get("/films", response_model=list[Film])
+@app.get("/films", response_model=list[FilmRead])
 async def read_all_films(session: SessionDep):
+    '''
     try:
         # Simplify to match main.py approach
         films = session.exec(select(Film)).all()
@@ -122,9 +146,23 @@ async def read_all_films(session: SessionDep):
         logger.error(f"Error retrieving films: {str(e)}")
         logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=f"Failed to retrieve films: {str(e)}")
+    '''
+    try:
+        statement = select(Film).options(
+            selectinload(Film.film_cast),
+            selectinload(Film.production_team)
+        )
+        films = session.exec(statement).all()
+        return films
+    except Exception as e:
+        logger.error(f"Error retrieving films: {str(e)}")
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=f"Failed to retrieve films: {str(e)}")
+
 
 @app.get("/users")
 async def read_all_users(session: SessionDep):
+    '''
     try:
         # First try to select from Film table as a test
         test_films = session.exec(select(Film)).all()
@@ -139,6 +177,31 @@ async def read_all_users(session: SessionDep):
         logger.error(f"Error in users endpoint: {str(e)}")
         logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=f"Database error in users endpoint: {str(e)}")
+    '''
+    try:
+        statement = select(FilmUser)
+        users = session.exec(statement).all()
+
+        data = ""
+        for user in users:
+            data += f"id: {user.id}, email: {user.email}, password: {user.password} + date_registered: {user.date_registered}\n"
+            for profile in user.profiles:
+                data += f"displayname: {profile.displayname}\n"
+                for search in profile.search_history:
+                    data += f"search_query: {search.search_query}\n"
+                for favorite in profile.favorites:
+                    data += f"favorite: {favorite.favorited_date} film_id: {favorite.film_id}\n"
+                for watchlater in profile.watch_later:
+                    data += f"dateadded: {watchlater.dateadded} film_id: {watchlater.film_id}\n"
+                for watchhistory in profile.watch_history:
+                    data += f"datewatched: {watchhistory.datewatched} film_id: {watchlater.film_id}\n"
+
+        return Response(content=data)
+    except Exception as e:
+        logger.error(f"Error in users endpoint: {str(e)}")
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=f"Database error in users endpoint: {str(e)}")
+
 
 @app.get("/")
 async def root():
