@@ -4,12 +4,9 @@ import traceback
 from contextlib import asynccontextmanager
 from typing import Annotated, List, Dict, Any
 from fastapi import Depends, FastAPI, Response, HTTPException
-from sqlmodel import Session, SQLModel, create_engine, select
+from sqlmodel import Session, SQLModel, create_engine, select, Field
 from sqlalchemy.orm import selectinload
 from fastapi.middleware.cors import CORSMiddleware
-from user_models import *
-from film_models import *
-from example_data import *
 import uvicorn
 
 # Set up detailed logging
@@ -18,17 +15,6 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
-
-'''
-# Define a simple Film model that matches main.py
-# This is for backward compatibility
-class Film(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-    name: str
-'''
-
-# Import the rest of the models afterward to prevent import errors
-from sqlmodel import Field
 
 # Get environment variables for database connection
 db_user = os.getenv("DB_USER", "watcher")
@@ -60,65 +46,63 @@ def get_session():
 
 SessionDep = Annotated[Session, Depends(get_session)]
 
+def drop_all_tables():
+    """Drop all tables from the database"""
+    try:
+        SQLModel.metadata.drop_all(engine)
+        logger.info("All tables dropped successfully")
+        return True
+    except Exception as e:
+        logger.error(f"Failed to drop tables: {str(e)}")
+        logger.error(traceback.format_exc())
+        return False
+
 def create_db_and_tables():
     try:
-        # Just create the simple Film model table for now
         SQLModel.metadata.create_all(engine)
         logger.info("Database tables created successfully")
+        return True
     except Exception as e:
         logger.error(f"Failed to create tables: {str(e)}")
         logger.error(traceback.format_exc())
+        return False
 
-'''
-def create_example_data(session: Session):
+# Import models after engine is created but before creating tables
+from film_models import *
+from user_models import *
+from example_data import *
+
+def create_example_data(session: SessionDep):
     try:
-        # Check if data already exists
-        existing_films = session.exec(select(Film)).all()
-        if existing_films:
-            logger.info(f"Example data already exists, found {len(existing_films)} films")
-            return
-
-        # Create example films - simplified version like in main.py
-        films = [
-            Film(name="The Great Train Robbery (1903)"),
-            Film(name="Nosferatu (1922)"),
-            Film(name="The Cabinet of Dr. Caligari (1920)"),
-            Film(name="Metropolis (1927)"),
-            Film(name="The General (1926)")
-        ]
-        
-        for film in films:
+        # Add example films
+        logger.info("Adding example films...")
+        for film in EXAMPLEFILMS:
             session.add(film)
+            
+        # Add example users
+        logger.info("Adding example users...")
+        for user in EXAMPLEUSERS:
+            session.add(user)
+            
         session.commit()
         logger.info("Example data created successfully")
+        return True
     except Exception as e:
         logger.error(f"Failed to create example data: {str(e)}")
         logger.error(traceback.format_exc())
         session.rollback()
-'''
-
-def create_example_data(session: SessionDep):
-    existing_films = session.exec(select(Film)).all()
-    if existing_films:
-        print("films already exist")
-    else:
-        for film in EXAMPLEFILMS:
-            session.add(film)
-    existing_users = session.exec(select(FilmUser)).all()
-    if existing_users:
-        print("useres already exist")
-    else:
-        for user in EXAMPLEUSERS:
-            session.add(user)
-    session.commit()
-
+        return False
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     try:
+        # Only create tables on startup, don't reset automatically
         create_db_and_tables()
         with Session(engine) as session:
-            create_example_data(session)
+            # Check if we need to add example data
+            films = session.exec(select(Film)).all()
+            if not films:
+                create_example_data(session)
     except Exception as e:
         logger.error(f"Startup database initialization failed: {str(e)}")
         logger.error(traceback.format_exc())
@@ -134,57 +118,61 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/films", response_model=list[FilmRead])
-async def read_all_films(session: SessionDep):
-    '''
+@app.get("/reset-database")
+async def reset_database():
+    """Reset the entire database - drop all tables and recreate them with example data"""
     try:
-        # Simplify to match main.py approach
-        films = session.exec(select(Film)).all()
+        # Drop all tables
+        if not drop_all_tables():
+            return {"status": "error", "message": "Failed to drop tables"}
+            
+        # Create tables
+        if not create_db_and_tables():
+            return {"status": "error", "message": "Failed to create tables"}
+            
+        # Add example data
+        with Session(engine) as session:
+            if not create_example_data(session):
+                return {"status": "error", "message": "Failed to add example data"}
+            
+        return {"status": "success", "message": "Database reset successfully"}
+    except Exception as e:
+        logger.error(f"Database reset failed: {str(e)}")
+        logger.error(traceback.format_exc())
+        return {"status": "error", "message": f"Failed to reset database: {str(e)}"}
+
+@app.get("/films", response_model=List[Film])
+async def read_all_films(session: SessionDep):
+    try:
+        # Try to use the Film model with all expected fields
+        statement = select(Film).options(
+            selectinload(Film.film_cast),
+            selectinload(Film.production_team)
+        )
+        films = session.exec(statement).all()
+        
+        # Make sure films have a name field (compatibility with frontend)
+        for film in films:
+            # Set name from title if not present
+            if not hasattr(film, "name") or film.name is None:
+                film.name = film.title
+                
         logger.info(f"Retrieved {len(films)} films")
         return films
     except Exception as e:
         logger.error(f"Error retrieving films: {str(e)}")
         logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=f"Failed to retrieve films: {str(e)}")
-    '''
-    try:
-        statement = select(Film).options(
-            selectinload(Film.film_cast),
-            selectinload(Film.production_team)
-        )
-        films = session.exec(statement).all()
-        return films
-    except Exception as e:
-        logger.error(f"Error retrieving films: {str(e)}")
-        logger.error(traceback.format_exc())
-        raise HTTPException(status_code=500, detail=f"Failed to retrieve films: {str(e)}")
-
 
 @app.get("/users")
 async def read_all_users(session: SessionDep):
-    '''
-    try:
-        # First try to select from Film table as a test
-        test_films = session.exec(select(Film)).all()
-        film_count = len(test_films)
-        
-        # Return a simple test message for debugging
-        return Response(
-            content=f"Database connection test successful. Found {film_count} films.\n\n"
-                    f"No users table implemented yet, but database connection is working."
-        )
-    except Exception as e:
-        logger.error(f"Error in users endpoint: {str(e)}")
-        logger.error(traceback.format_exc())
-        raise HTTPException(status_code=500, detail=f"Database error in users endpoint: {str(e)}")
-    '''
     try:
         statement = select(FilmUser)
         users = session.exec(statement).all()
 
         data = ""
         for user in users:
-            data += f"id: {user.id}, email: {user.email}, password: {user.password} + date_registered: {user.date_registered}\n"
+            data += f"id: {user.id}, email: {user.email}, password: {user.password}, date_registered: {user.date_registered}\n"
             for profile in user.profiles:
                 data += f"displayname: {profile.displayname}\n"
                 for search in profile.search_history:
@@ -194,7 +182,7 @@ async def read_all_users(session: SessionDep):
                 for watchlater in profile.watch_later:
                     data += f"dateadded: {watchlater.dateadded} film_id: {watchlater.film_id}\n"
                 for watchhistory in profile.watch_history:
-                    data += f"datewatched: {watchhistory.datewatched} film_id: {watchlater.film_id}\n"
+                    data += f"datewatched: {watchhistory.datewatched} film_id: {watchhistory.film_id}\n"
 
         return Response(content=data)
     except Exception as e:
@@ -202,6 +190,35 @@ async def read_all_users(session: SessionDep):
         logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=f"Database error in users endpoint: {str(e)}")
 
+@app.get("/db-test")
+async def test_db():
+    """Test database connection and table structure"""
+    try:
+        # Test basic connection
+        with Session(engine) as session:
+            result = session.execute("SELECT 1").fetchone()
+            
+            # Get table info
+            tables_info = {}
+            for table in SQLModel.metadata.tables.keys():
+                try:
+                    # Try to get columns for each table
+                    columns = session.execute(f"SELECT column_name FROM information_schema.columns WHERE table_name = '{table}'").fetchall()
+                    tables_info[table] = [col[0] for col in columns]
+                except Exception as table_error:
+                    tables_info[table] = f"Error: {str(table_error)}"
+            
+            return {
+                "status": "Connected",
+                "basic_query": result,
+                "tables": tables_info
+            }
+    except Exception as e:
+        return {
+            "status": "Failed",
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        }
 
 @app.get("/")
 async def root():
