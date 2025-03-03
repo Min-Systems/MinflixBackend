@@ -47,3 +47,19 @@ class FilmProductionTeamRead(SQLModel):
     id: int
     name: str
     role: str
+
+
+class FilmRead(SQLModel):
+    id: int
+    title: str
+    length: int
+    technical_location: str
+    producer: str
+    # Nested FilmCast data
+    film_cast: List[FilmCastRead]
+    # Nested Production data
+    production_team: List[FilmProductionTeamRead]
+
+    class Config:
+        # Enables serialization from ORM objects
+        orm_mode = True  
