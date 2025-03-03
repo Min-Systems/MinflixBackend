@@ -141,9 +141,10 @@ async def reset_database():
         logger.error(traceback.format_exc())
         return {"status": "error", "message": f"Failed to reset database: {str(e)}"}
 
-@app.get("/films")
+@app.get("/films", response_model=List[Film])
 async def read_all_films(session: SessionDep):
     try:
+        # Try to use the Film model with all expected fields
         statement = select(Film).options(
             selectinload(Film.film_cast),
             selectinload(Film.production_team)
@@ -167,9 +168,8 @@ async def read_all_films(session: SessionDep):
             for member in film.production_team:
                 data += f"  {member.name} - {member.role}\n"
                 
-            data += "\n"  # Add blank line between films
-            
-        return Response(content=data)
+        logger.info(f"Retrieved {len(films)} films")
+        return films
     except Exception as e:
         logger.error(f"Error retrieving films: {str(e)}")
         logger.error(traceback.format_exc())
