@@ -145,6 +145,7 @@ async def reset_database():
 async def read_all_films(session: SessionDep):
     try:
         # Try to use the Film model with all expected fields
+        '''
         statement = select(Film).options(
             selectinload(Film.film_cast),
             selectinload(Film.production_team)
@@ -159,6 +160,20 @@ async def read_all_films(session: SessionDep):
                 
         logger.info(f"Retrieved {len(films)} films")
         return films
+        '''
+        statement = select(Film)
+        films = session.exec(statement).all()
+
+        data = ""
+
+        for film in films:
+            data += f"id: {film.id} title: {film.title}\n"
+            for cast_member in film.film_cast:
+                data += f"name: {cast_member.name} role: {cast_member.role}\n"
+            for production_member in film.production_team:
+                data += f"name: {production_member.name} role: {production_member.role}\n"
+            
+            return Response(content=data)
     except Exception as e:
         logger.error(f"Error retrieving films: {str(e)}")
         logger.error(traceback.format_exc())
