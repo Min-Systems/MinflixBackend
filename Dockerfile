@@ -2,15 +2,14 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# Copy requirements first to leverage Docker caching
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Install dependencies
+RUN pip install --no-cache-dir fastapi uvicorn
 
-# Copy the application code
-COPY . .
+# Copy application code
+COPY main.py .
 
-# Expose the port
+# Expose port
 EXPOSE 8080
 
-# Use Gunicorn as the production server
-CMD exec gunicorn --bind :$PORT --workers 1 --worker-class uvicorn.workers.UvicornWorker --threads 8 main:app
+# Run the application
+CMD ["python", "main.py"]
