@@ -141,24 +141,35 @@ async def reset_database():
         logger.error(traceback.format_exc())
         return {"status": "error", "message": f"Failed to reset database: {str(e)}"}
 
-@app.get("/films", response_model=List[Film])
+@app.get("/films")
 async def read_all_films(session: SessionDep):
     try:
-        # Try to use the Film model with all expected fields
         statement = select(Film).options(
             selectinload(Film.film_cast),
             selectinload(Film.production_team)
         )
         films = session.exec(statement).all()
         
-        # Make sure films have a name field (compatibility with frontend)
+        # Format as text similar to users endpoint
+        data = ""
         for film in films:
-            # Set name from title if not present
-            if not hasattr(film, "name") or film.name is None:
-                film.name = film.title
+            # Basic film info
+            data += f"id: {film.id} title: {film.title}, length: {film.length}, "
+            data += f"location: {film.technical_location}, producer: {film.producer}\n"
+            
+            # Cast info
+            data += "Cast:\n"
+            for cast in film.film_cast:
+                data += f"  {cast.name} as {cast.role}\n"
                 
-        logger.info(f"Retrieved {len(films)} films")
-        return films
+            # Production team
+            data += "Production Team:\n"
+            for member in film.production_team:
+                data += f"  {member.name} - {member.role}\n"
+                
+            data += "\n"  # Add blank line between films
+            
+        return Response(content=data)
     except Exception as e:
         logger.error(f"Error retrieving films: {str(e)}")
         logger.error(traceback.format_exc())
