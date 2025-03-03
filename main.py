@@ -2,20 +2,19 @@ import os
 import logging
 import traceback
 from contextlib import asynccontextmanager
-from typing import Annotated
-from fastapi import Depends, FastAPI, HTTPException, Query
-from sqlmodel import Field, Session, SQLModel, create_engine, select
+from typing import Annotated, List
+from fastapi import Depends, FastAPI, Response, HTTPException
+from sqlmodel import Session, SQLModel, create_engine, select
+from sqlalchemy.orm import selectinload
 from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
+from film_models import *
+from user_models import *
+from example_data import *
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-class Film(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-    name: str
-
-
+# Get environment variables for database connection
 db_user = os.getenv("DB_USER", "watcher")
 db_password = os.getenv("DB_PASSWORD", "T:->%I-iMQXOiqOt")
 db_name = os.getenv("DB_NAME", "filmpoc")
@@ -31,7 +30,7 @@ try:
 except Exception as e:
     logger.error(f"Failed to create database engine: {str(e)}")
     logger.error(traceback.format_exc())
-    # don't raise
+    # don't raise, allow app to start anyway
 
 def get_session():
     try:
@@ -56,42 +55,31 @@ def create_db_and_tables():
         # don't raise
 
 
-def create_example_data(session: Session):
+def create_example_data(session: SessionDep):
     try:
-        # Check if data already exists
+        # Check if data already exists to avoid duplicates
         existing_films = session.exec(select(Film)).all()
-        if existing_films:
-            logger.info(f"Example data already exists, found {len(existing_films)} films")
-            return
-
-        # Create example films
-        films = [
-            Film(name="The Great Train Robbery (1903)"),
-            Film(name="Nosferatu (1922)"),
-            Film(name="The Cabinet of Dr. Caligari (1920)"),
-            Film(name="Metropolis (1927)"),
-            Film(name="The General (1926)"),
-            Film(name="Safety Last! (1923)"),
-            Film(name="The Kid (1921)"),
-            Film(name="The Gold Rush (1925)"),
-            Film(name="The Phantom of the Opera (1925)"),
-            Film(name="The Lost World (1925)")
-        ]
-        
-        for film in films:
-            session.add(film)
+        if not existing_films:
+            for film in EXAMPLEFILMS:
+                session.add(film)
+            
+        existing_users = session.exec(select(FilmUser)).all()
+        if not existing_users:
+            for user in EXAMPLEUSERS:
+                session.add(user)
+                
         session.commit()
         logger.info("Example data created successfully")
     except Exception as e:
         logger.error(f"Failed to create example data: {str(e)}")
         logger.error(traceback.format_exc())
         session.rollback()
-        # Don't raise here - allow app to continue even if data can't be inserted
+        # Don't raise here to allow app to continue
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # try to initialize database but continue if it fails, don't raise
+    # Initialize database but continue if it fails
     try:
         create_db_and_tables()
         with Session(engine) as session:
@@ -104,6 +92,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -113,24 +102,59 @@ app.add_middleware(
 )
 
 
-@app.get("/films", response_model=list[Film])
-async def read_all_films(session: SessionDep):
+@app.get("/films", response_model=List[FilmRead])
+def read_all_films(session: SessionDep):
     try:
-        films = session.exec(select(Film)).all()
+        statement = select(Film).options(
+            selectinload(Film.film_cast),
+            selectinload(Film.production_team)
+        )
+        films = session.exec(statement).all()
+        
+        # Modify the result to add a "name" field for backward compatibility
+        for film in films:
+            film.name = film.title  # Add name field to match frontend expectations
+            
         logger.info(f"Retrieved {len(films)} films")
         return films
     except Exception as e:
         logger.error(f"Error retrieving films: {str(e)}")
         logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail="Failed to retrieve films from database")
+
+
+@app.get("/users")
+def read_all_users(session: SessionDep):
+    try:
+        statement = select(FilmUser)
+        users = session.exec(statement).all()
+
+        data = ""
+        for user in users:
+            data += f"id: {user.id}, email: {user.email}, password: {user.password}, date_registered: {user.date_registered}\n"
+            for profile in user.profiles:
+                data += f"displayname: {profile.displayname}\n"
+                for search in profile.search_history:
+                    data += f"search_query: {search.search_query}\n"
+                for favorite in profile.favorites:
+                    data += f"favorite: {favorite.favorited_date} film_id: {favorite.film_id}\n"
+                for watchlater in profile.watch_later:
+                    data += f"dateadded: {watchlater.dateadded} film_id: {watchlater.film_id}\n"
+                for watchhistory in profile.watch_history:
+                    data += f"datewatched: {watchhistory.datewatched} film_id: {watchhistory.film_id}\n"
+
+        logger.info("Retrieved user data")
+        return Response(content=data)
+    except Exception as e:
+        logger.error(f"Error retrieving users: {str(e)}")
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail="Failed to retrieve users from database")
         
+
 @app.get("/")
 async def root():
     return {"message": "MinFlix Backend is running"}
 
-@app.get("/test-cors")
-async def test_cors():
-    return {"message": "CORS is working!"}
 
 @app.get("/health")
 async def health_check():
@@ -151,9 +175,3 @@ async def health_check():
             "database": "disconnected",
             "error": str(e)
         }
-
-app = app
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8080))
-    uvicorn.run(app, host="0.0.0.0", port=port)
