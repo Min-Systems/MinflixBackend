@@ -1,11 +1,12 @@
 import os
 from contextlib import asynccontextmanager
-from typing import Annotated, List, Optional
-from fastapi import Depends, FastAPI, HTTPException, Query
-from sqlmodel import Field, Session, SQLModel, create_engine, select, Relationship
+from typing import Annotated, List
+from fastapi import Depends, FastAPI 
+from sqlmodel import Session, SQLModel, create_engine, select, Relationship
 from sqlalchemy.orm import selectinload
 from fastapi.middleware.cors import CORSMiddleware
 from models import *
+from film_models import *
 from example_data import *
 
 
@@ -31,6 +32,8 @@ def create_db_and_tables():
 def create_example_data(session: SessionDep):
     for film in EXAMPLEFILMS:
         session.add(film)
+    for user in EXAMPLEUSERS:
+        session.add(user)
     session.commit()
 
 
@@ -64,11 +67,22 @@ app.add_middleware(
 
 
 @app.get("/films", response_model=List[FilmRead])
-def read_all_films(session: SessionDep, offset: int = 0):
-    # Query all films and include related cast and production team
+def read_all_films(session: SessionDep):
     statement = select(Film).options(
         selectinload(Film.film_cast),
         selectinload(Film.production_team)
     )
     films = session.exec(statement).all()
     return films
+
+
+@app.get("/users")
+def read_all_users(session: SessionDep, response_model=List[FilmUserRead]):
+    statement = select(FilmUser).options(
+        selectinload(FilmUser.profiles).selectinload(Profile.search_history),
+        selectinload(FilmUser.profiles).selectinload(Profile.favorites),
+        selectinload(FilmUser.profiles).selectinload(Profile.watch_later),
+        selectinload(FilmUser.profiles).selectinload(Profile.watch_history),
+    )
+    users = session.exec(statement).all()
+    return users
