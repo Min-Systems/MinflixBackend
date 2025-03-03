@@ -141,7 +141,7 @@ async def reset_database():
         logger.error(traceback.format_exc())
         return {"status": "error", "message": f"Failed to reset database: {str(e)}"}
 
-@app.get("/films", response_model=List[Film])
+@app.get("/films", response_model=List[FilmRead])
 async def read_all_films(session: SessionDep):
     try:
         # Try to use the Film model with all expected fields
