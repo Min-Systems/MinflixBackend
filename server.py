@@ -1,8 +1,10 @@
 import os
+import datetime
+import base64
 from contextlib import asynccontextmanager
 from typing import Annotated, List
-from fastapi import Depends, FastAPI, Response
-from sqlmodel import Session, SQLModel, create_engine, select, Relationship
+from fastapi import Depends, FastAPI, Response, Form
+from sqlmodel import Session, SQLModel, create_engine, select
 from sqlalchemy.orm import selectinload
 from fastapi.middleware.cors import CORSMiddleware
 from film_models import *
@@ -25,13 +27,34 @@ def get_session():
 SessionDep = Annotated[Session, Depends(get_session)]
 
 
+def drop_all_tables():
+    SQLModel.metadata.drop_all(engine)
+
+
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
 
 
+def encode_session_cookie(text, encoding="utf-8"):
+    """Encodes a string to Base64 and returns an ASCII representation.
+
+    Args:
+        text: The string to encode.
+        encoding: The encoding to use for the initial conversion to bytes 
+                  (default: 'utf-8').
+
+    Returns:
+        The Base64 encoded string as ASCII.
+    """
+    text_bytes = text.encode(encoding)
+    base64_bytes = base64.b64encode(text_bytes)
+    base64_string = base64_bytes.decode('ascii')
+    return base64_string
+
+
 def create_example_data(session: SessionDep):
-    #for film in EXAMPLEFILMS:
-    #    session.add(film)
+    for film in EXAMPLEFILMS:
+        session.add(film)
     for user in EXAMPLEUSERS:
         session.add(user)
     session.commit()
@@ -40,10 +63,14 @@ def create_example_data(session: SessionDep):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     setup_db = os.environ.get("SETUPDB")
-    if setup_db == "True":
+    if setup_db == "Example":
+        drop_all_tables()
         create_db_and_tables()
         with Session(engine) as session:
             create_example_data(session)
+    elif setup_db == "Dynamic":
+        drop_all_tables()
+        create_db_and_tables()
     yield
 
 
@@ -96,3 +123,20 @@ def read_all_users(session: SessionDep):
                 data += f"datewatched: {watchhistory.datewatched} film_id: {watchlater.film_id}\n"
 
     return Response(content=data)
+
+
+@app.post("/registration")
+def registration(response: Response, session: SessionDep, email: Annotated[str, Form()], password: Annotated[str, Form()]):
+    print(f"Email: {email}")
+    print(f"Password: {password}")
+
+    current_date = datetime.datetime.now()
+    new_user = FilmUser(email=email, password=password,
+                        date_registered=current_date, profiles=[])
+    session.add(new_user)
+    session.commit()
+
+    token = encode_session_cookie(str(current_date))
+    print(f"Token: {token}")
+    response.set_cookie(key="session_token", value=token, httponly=True, secure=False, samesite="Lax")
+    return {"message": "Registration Successful"}
