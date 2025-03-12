@@ -1,4 +1,5 @@
 import os
+import jwt
 import datetime
 from contextlib import asynccontextmanager
 from typing import Annotated, List
@@ -7,7 +8,6 @@ from sqlmodel import Session, SQLModel, create_engine, select
 from sqlalchemy.orm import selectinload
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from jwt.exceptions import InvalidTokenError
 from passlib.context import CryptContext
 from film_models import *
 from user_models import *
@@ -23,7 +23,7 @@ engine = create_engine(url_postgresql, echo=True)
 
 
 # openssl rand -hex 32 to generate key(more on this later)
-SECRET_KEY = "example_key"
+SECRET_KEY = "abc"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 2
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
@@ -66,7 +66,7 @@ async def lifespan(app: FastAPI):
         drop_all_tables()
         create_db_and_tables()
     elif setup_db == "Production":
-        # something better here
+        create_db_and_tables()
         print("production db configured")
     yield
 
@@ -75,20 +75,25 @@ app = FastAPI(lifespan=lifespan)
 
 
 origins = [
-    "http://localhost.tiangolo.com",
-    "https://localhost.tiangolo.com",
-    "http://127.0.0.1",
-    "http://127.0.0.1:8000",
+    "http://localhost:3000/registration",
+    "http://localhost:3000",
 ]
 
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+def create_jwt_token(data: dict) -> str:
+    to_encode = data.copy()
+    expire = datetime.datetime.now() + datetime.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire, "token_type": "bearer"})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
 
 
 @app.get("/films", response_model=List[FilmRead])
@@ -124,7 +129,7 @@ def read_all_users(session: SessionDep):
 
 
 @app.post("/registration")
-def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()):
+def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
     print("Got registration")
     print(f"Username: {form_data.username}")
     print(f"Password: {form_data.password}")
@@ -132,14 +137,20 @@ def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm = Dep
     statement = select(FilmUser).where(FilmUser.username == form_data.username)
     current_user = session.exec(statement).first()
     if current_user:
+        print("User found")
         raise HTTPException(status_code=404, detail="User Found Please Login")
     # make new user and commit data with password hash
     new_user = FilmUser(username=form_data.username, password=pwd_context.hash(
         form_data.password), date_registered=datetime.datetime.now(), profiles=[])
     session.add(new_user)
     session.commit()
+    statement = select(FilmUser).where(FilmUser.username == form_data.username)
+    current_user = session.exec(statement).first()
     # get info for token
+    data_token = TokenModel(id=current_user.id, profiles=[])
+    data_token = data_token.model_dump()
     # send back token
+    return create_jwt_token(data_token)
 
 
 @app.post("/login")
