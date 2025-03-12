@@ -2,13 +2,13 @@ from sqlmodel import Field, SQLModel, Relationship
 from typing import List, Optional
 from pydantic import BaseModel
 from film_models import *
-
+import datetime
 
 class FilmUser(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    email: str
+    username: str
     password: str
-    date_registered: str
+    date_registered: datetime.datetime
     profiles: List["Profile"] = Relationship(back_populates="filmuser")
 
 

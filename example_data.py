@@ -1,3 +1,4 @@
+import datetime
 from user_models import *
 from film_models import *
 
@@ -86,9 +87,9 @@ EXAMPLEFILMS = [
 
 EXAMPLEUSERS = [
     FilmUser(
-        email="user1@example.com",
+        username="user1@example.com",
         password="securepassword1",
-        date_registered="2025",
+        date_registered=datetime.datetime.now(),
         profiles=[
             Profile(
                 displayname="user1profile1",
@@ -163,9 +164,9 @@ EXAMPLEUSERS = [
         ]
     ),
     FilmUser(
-        email="user2@example.com",
+        username="user2@example.com",
         password="securepassword2",
-        date_registered="2024",
+        date_registered=datetime.datetime.now(),
         profiles = [
             Profile(
                 displayname="user2profile1",

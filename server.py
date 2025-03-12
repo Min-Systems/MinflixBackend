@@ -1,15 +1,18 @@
 import os
 import datetime
-import base64
 from contextlib import asynccontextmanager
 from typing import Annotated, List
-from fastapi import Depends, FastAPI, Response, Form
+from fastapi import Depends, FastAPI, Response, Form, HTTPException
 from sqlmodel import Session, SQLModel, create_engine, select
 from sqlalchemy.orm import selectinload
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from jwt.exceptions import InvalidTokenError
+from passlib.context import CryptContext
 from film_models import *
 from user_models import *
 from example_data import *
+from token_models import *
 
 
 db_postgresql = "filmpoc"
@@ -17,6 +20,14 @@ user_postgresql = "watcher"
 password_postgresql = "films"
 url_postgresql = f"postgresql://{user_postgresql}:{password_postgresql}@localhost/{db_postgresql}"
 engine = create_engine(url_postgresql, echo=True)
+
+
+# openssl rand -hex 32 to generate key(more on this later)
+SECRET_KEY = "example_key"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 2
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def get_session():
@@ -33,23 +44,6 @@ def drop_all_tables():
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
-
-
-def encode_session_cookie(text, encoding="utf-8"):
-    """Encodes a string to Base64 and returns an ASCII representation.
-
-    Args:
-        text: The string to encode.
-        encoding: The encoding to use for the initial conversion to bytes 
-                  (default: 'utf-8').
-
-    Returns:
-        The Base64 encoded string as ASCII.
-    """
-    text_bytes = text.encode(encoding)
-    base64_bytes = base64.b64encode(text_bytes)
-    base64_string = base64_bytes.decode('ascii')
-    return base64_string
 
 
 def create_example_data(session: SessionDep):
@@ -71,6 +65,9 @@ async def lifespan(app: FastAPI):
     elif setup_db == "Dynamic":
         drop_all_tables()
         create_db_and_tables()
+    elif setup_db == "Production":
+        # something better here
+        print("production db configured")
     yield
 
 
@@ -83,6 +80,7 @@ origins = [
     "http://127.0.0.1",
     "http://127.0.0.1:8000",
 ]
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -126,17 +124,46 @@ def read_all_users(session: SessionDep):
 
 
 @app.post("/registration")
-def registration(response: Response, session: SessionDep, email: Annotated[str, Form()], password: Annotated[str, Form()]):
-    print(f"Email: {email}")
-    print(f"Password: {password}")
-
-    current_date = datetime.datetime.now()
-    new_user = FilmUser(email=email, password=password,
-                        date_registered=current_date, profiles=[])
+def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()):
+    print("Got registration")
+    print(f"Username: {form_data.username}")
+    print(f"Password: {form_data.password}")
+    # see if username exists in database
+    statement = select(FilmUser).where(FilmUser.username == form_data.username)
+    current_user = session.exec(statement).first()
+    if current_user:
+        raise HTTPException(status_code=404, detail="User Found Please Login")
+    # make new user and commit data with password hash
+    new_user = FilmUser(username=form_data.username, password=pwd_context.hash(
+        form_data.password), date_registered=datetime.datetime.now(), profiles=[])
     session.add(new_user)
     session.commit()
+    # get info for token
+    # send back token
 
-    token = encode_session_cookie(str(current_date))
-    print(f"Token: {token}")
-    response.set_cookie(key="session_token", value=token, httponly=True, secure=False, samesite="Lax")
-    return {"message": "Registration Successful"}
+
+@app.post("/login")
+def login(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()):
+    print("Got login")
+    print(f"Username: {form_data.username}")
+    print(f"Password: {form_data.password}")
+    # see if username exists in database
+    statement = select(FilmUser).where(FilmUser.username == form_data.username)
+    current_user = session.exec(statement).first()
+    if current_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    # verify password
+    if not pwd_context.verify(form_data.password, current_user.password):
+        raise HTTPException(status_code=404, detail="Wrong Password")
+    # get info for token
+    # send back token
+
+
+@app.post("/addprofile")
+def add_profile():
+    pass
+
+
+@app.post("/removeprofile")
+def remove_profile():
+    pass
