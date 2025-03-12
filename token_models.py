@@ -4,21 +4,16 @@ from pydantic import BaseModel
 from user_models import *
 
 
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-
-
-class TokenData(BaseModel):
+class TokenModel(BaseModel):
     '''
         id: this the film user id
         profiles: list of user profiles
     '''
     id: int
-    profiles: List["ProfileData"]
+    profiles: List["TokenProfileDataModel"]
 
 
-class ProfileData(BaseModel):
+class TokenProfileDataModel(BaseModel):
     id: int
     displayname: str
 
