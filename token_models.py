@@ -16,14 +16,3 @@ class TokenModel(BaseModel):
 class TokenProfileDataModel(BaseModel):
     id: int
     displayname: str
-
-
-'''
-class TokenUserData(BaseModel):
-    id: int
-    profiles: List["ProfileData"]
-
-
-class TokenData(BaseModel):
-    token_user: TokenUserData
-'''
