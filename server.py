@@ -25,7 +25,7 @@ engine = create_engine(url_postgresql, echo=True)
 # openssl rand -hex 32 to generate key(more on this later)
 SECRET_KEY = "abc"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 5
+ACCESS_TOKEN_EXPIRE_MINUTES = 10
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -77,7 +77,6 @@ app = FastAPI(lifespan=lifespan)
 
 
 origins = [
-    "http://localhost:3000/registration",
     "http://localhost:3000",
 ]
 
@@ -93,7 +92,7 @@ app.add_middleware(
 
 def create_jwt_token(data: dict) -> str:
     to_encode = data.copy()
-    expire = datetime.datetime.now() + datetime.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire, "token_type": "bearer"})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
@@ -107,6 +106,7 @@ def verify_jwt_token(token: str) -> dict:
 
         # Check if it's a bearer token
         if payload.get("token_type") != "bearer":
+            print("bearer probelem")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid token type",
@@ -114,9 +114,12 @@ def verify_jwt_token(token: str) -> dict:
             )
 
         return payload
-
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        raise HTTPException(status_code=401)
     except JWTError:
         # This will catch issues like invalid signature, expired token, etc.
+        print("general error")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
@@ -126,9 +129,6 @@ def verify_jwt_token(token: str) -> dict:
 
 @app.post("/registration")
 def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
-    print("Got registration")
-    print(f"Username: {form_data.username}")
-    print(f"Password: {form_data.password}")
     # see if username exists in database
     statement = select(FilmUser).where(FilmUser.username == form_data.username)
     current_user = session.exec(statement).first()
@@ -145,17 +145,12 @@ def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm = Dep
     # get info for token
     data_token = TokenModel(id=current_user.id, profiles=[])
     data_token = data_token.model_dump()
-    print("The data token:")
-    print(data_token)
     # send back token
     return create_jwt_token(data_token)
 
 
 @app.post("/login")
 def login(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
-    print("Got login")
-    print(f"Username: {form_data.username}")
-    print(f"Password: {form_data.password}")
     # see if username exists in database
     statement = select(FilmUser).where(FilmUser.username == form_data.username)
     current_user = session.exec(statement).first()
@@ -167,8 +162,6 @@ def login(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends())
     # get info for token
     data_token = TokenModel(id=current_user.id, profiles=[])
     data_token = data_token.model_dump()
-    print("The data token:")
-    print(data_token)
     # send back token
     return create_jwt_token(data_token)
 
@@ -182,7 +175,8 @@ def get_current_filmuser(token: str = Depends(oauth2_scheme)) -> int:
 def add_profile(displayname: Annotated[str, Form()], session: SessionDep, current_filmuser: int = Depends(get_current_filmuser)) -> str:
     current_user = session.get(FilmUser, current_filmuser) 
     current_user.profiles.append(Profile(displayname=displayname))
-    session.commit(current_user)
+    session.add(current_user)
+    session.commit()
     current_user = session.get(FilmUser, current_filmuser) 
 
     profile_data = []
@@ -199,4 +193,9 @@ def add_profile(displayname: Annotated[str, Form()], session: SessionDep, curren
 
 @app.post("/removeprofile")
 def remove_profile():
+    print("Got remove")
     pass
+
+'''
+TypeError: Session.commit() takes 1 positional argument but 2 were give
+'''
