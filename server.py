@@ -92,7 +92,8 @@ app.add_middleware(
 
 def create_jwt_token(data: dict) -> str:
     to_encode = data.copy()
-    expire = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.datetime.now(
+        datetime.timezone.utc) + datetime.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire, "token_type": "bearer"})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
@@ -114,9 +115,7 @@ def verify_jwt_token(token: str) -> dict:
             )
 
         return payload
-    except Exception as e:
-        print(f"Unexpected error: {e}")
-        raise HTTPException(status_code=401)
+        
     except JWTError:
         # This will catch issues like invalid signature, expired token, etc.
         print("general error")
@@ -129,40 +128,39 @@ def verify_jwt_token(token: str) -> dict:
 
 @app.post("/registration")
 def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
-    # see if username exists in database
     statement = select(FilmUser).where(FilmUser.username == form_data.username)
     current_user = session.exec(statement).first()
     if current_user:
         print("User found")
         raise HTTPException(status_code=404, detail="User Found Please Login")
-    # make new user and commit data with password hash
+
     new_user = FilmUser(username=form_data.username, password=pwd_context.hash(
         form_data.password), date_registered=datetime.datetime.now(), profiles=[])
     session.add(new_user)
     session.commit()
     statement = select(FilmUser).where(FilmUser.username == form_data.username)
     current_user = session.exec(statement).first()
-    # get info for token
+
     data_token = TokenModel(id=current_user.id, profiles=[])
     data_token = data_token.model_dump()
-    # send back token
+
     return create_jwt_token(data_token)
 
 
 @app.post("/login")
 def login(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
-    # see if username exists in database
+
     statement = select(FilmUser).where(FilmUser.username == form_data.username)
     current_user = session.exec(statement).first()
     if current_user is None:
         raise HTTPException(status_code=404, detail="User not found")
-    # verify password
+
     if not pwd_context.verify(form_data.password, current_user.password):
         raise HTTPException(status_code=404, detail="Wrong Password")
-    # get info for token
+
     data_token = TokenModel(id=current_user.id, profiles=[])
     data_token = data_token.model_dump()
-    # send back token
+
     return create_jwt_token(data_token)
 
 
@@ -173,21 +171,20 @@ def get_current_filmuser(token: str = Depends(oauth2_scheme)) -> int:
 
 @app.post("/addprofile")
 def add_profile(displayname: Annotated[str, Form()], session: SessionDep, current_filmuser: int = Depends(get_current_filmuser)) -> str:
-    current_user = session.get(FilmUser, current_filmuser) 
+    current_user = session.get(FilmUser, current_filmuser)
     current_user.profiles.append(Profile(displayname=displayname))
     session.add(current_user)
     session.commit()
-    current_user = session.get(FilmUser, current_filmuser) 
 
+    current_user = session.get(FilmUser, current_filmuser)
     profile_data = []
     for profile in current_user.profiles:
-        profile_data.append(TokenProfileDataModel(id=profile.id, displayname=profile.displayname))
+        profile_data.append(TokenProfileDataModel(
+            id=profile.id, displayname=profile.displayname))
 
-    data_token = TokenModel(id=current_user.id, profiles=profile_data) 
+    data_token = TokenModel(id=current_user.id, profiles=profile_data)
     data_token = data_token.model_dump()
-    print("The data token:")
-    print(data_token)
-    # send back token
+
     return create_jwt_token(data_token)
 
 
