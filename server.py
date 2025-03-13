@@ -195,7 +195,3 @@ def add_profile(displayname: Annotated[str, Form()], session: SessionDep, curren
 def remove_profile():
     print("Got remove")
     pass
-
-'''
-TypeError: Session.commit() takes 1 positional argument but 2 were give
-'''
