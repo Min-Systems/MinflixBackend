@@ -62,12 +62,14 @@ async def lifespan(app: FastAPI):
         create_db_and_tables()
         with Session(engine) as session:
             create_example_data(session)
+        print(f"{setup_db} db configured")
     elif setup_db == "Dynamic":
         drop_all_tables()
         create_db_and_tables()
+        print(f"{setup_db} db configured")
     elif setup_db == "Production":
         create_db_and_tables()
-        print("production db configured")
+        print(f"{setup_db} db configured")
     yield
 
 
@@ -149,6 +151,8 @@ def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm = Dep
     # get info for token
     data_token = TokenModel(id=current_user.id, profiles=[])
     data_token = data_token.model_dump()
+    print("The data token:")
+    print(data_token)
     # send back token
     return create_jwt_token(data_token)
 
@@ -167,7 +171,12 @@ def login(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends())
     if not pwd_context.verify(form_data.password, current_user.password):
         raise HTTPException(status_code=404, detail="Wrong Password")
     # get info for token
+    data_token = TokenModel(id=current_user.id, profiles=[])
+    data_token = data_token.model_dump()
+    print("The data token:")
+    print(data_token)
     # send back token
+    return create_jwt_token(data_token)
 
 
 @app.post("/addprofile")
