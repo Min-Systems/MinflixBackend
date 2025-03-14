@@ -80,8 +80,9 @@ app = FastAPI(lifespan=lifespan)
 
 
 origins = [
-    "https://minflixhd.web.app/",
-    "https://minflixbackend-611864661290.us-west2.run.app"
+    "https://minflixhd.web.app",
+    "https://minflixbackend-611864661290.us-west2.run.app",
+    "https://minflixbackend-611864661290.us-west2.run.app/registration"
 ]
 
 
