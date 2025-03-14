@@ -1,12 +1,20 @@
-from sqlmodel import Field, SQLModel, Relationship
+from sqlmodel import Field, SQLModel, Relationship, Column
 from typing import List, Optional
 from pydantic import BaseModel
 from film_models import *
 import datetime
+from sqlalchemy import String
 
 class FilmUser(SQLModel, table=True):
+    # Define the table name explicitly
+    __tablename__ = "filmuser"
+    
     id: Optional[int] = Field(default=None, primary_key=True)
-    username: str
+    
+    # Use SQLAlchemy Column for explicit naming
+    # If your database column is actually named differently, specify it here
+    # Common possibilities might be 'user_name', 'email', etc.
+    username: str = Field(sa_column=Column("email", String, nullable=False))
     password: str
     date_registered: datetime.datetime
     profiles: List["Profile"] = Relationship(back_populates="filmuser")
@@ -26,6 +34,7 @@ class Profile(SQLModel, table=True):
     watch_history: List["WatchHistory"] = Relationship(back_populates="profile")
 
 
+# The rest of your model definitions remain the same
 class SearchHistory(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     profileid: int = Field(foreign_key="profile.id")
