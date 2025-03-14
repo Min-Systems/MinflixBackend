@@ -1,5 +1,6 @@
 import os
 import datetime
+import logging
 from contextlib import asynccontextmanager
 from typing import Annotated, List
 from fastapi import Depends, FastAPI, Response, Form, HTTPException, status
@@ -15,11 +16,19 @@ from example_data import *
 from token_models import *
 
 
-db_postgresql = "filmpoc"
-user_postgresql = "watcher"
-password_postgresql = "T:->%I-iMQXOiqOt"
-url_postgresql = f"postgresql://{user_postgresql}:{password_postgresql}@localhost/{db_postgresql}"
-engine = create_engine(url_postgresql, echo=True)
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Get environment variables for database connection
+db_user = os.getenv("DB_USER", "watcher")
+db_password = os.getenv("DB_PASSWORD", "T:->%I-iMQXOiqOt")
+db_name = os.getenv("DB_NAME", "filmpoc")
+instance_connection_name = os.getenv("INSTANCE_CONNECTION_NAME", "minflix-451300:us-west2:streaming-db")
+
+# Connection string for Cloud SQL
+database_url = f"postgresql+pg8000://{db_user}:{db_password}@/{db_name}?unix_sock=/cloudsql/{instance_connection_name}/.s.PGSQL.5432"
+logger.info(f"Using database URL: {database_url.replace(db_password, '********')}")
 
 
 # openssl rand -hex 32 to generate key(more on this later)
