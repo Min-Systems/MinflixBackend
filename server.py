@@ -99,7 +99,8 @@ app = FastAPI(lifespan=lifespan)
 origins = [
     "https://minflixhd.web.app",  # Remove trailing slash
     "http://localhost:3000",
-    "https://minflixbackend-611864661290.us-west2.run.app"
+    "https://minflixbackend-611864661290.us-west2.run.app",
+    "."
 ]
 
 
