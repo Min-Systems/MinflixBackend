@@ -1,6 +1,6 @@
 import os
 import datetime
-import logging
+import secrets
 from contextlib import asynccontextmanager
 from typing import Annotated, List
 from fastapi import Depends, FastAPI, Response, Form, HTTPException, status
@@ -16,23 +16,15 @@ from example_data import *
 from token_models import *
 
 
-# Set up logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-# Get environment variables for database connection
-db_user = os.getenv("DB_USER", "watcher")
-db_password = os.getenv("DB_PASSWORD", "T:->%I-iMQXOiqOt")
-db_name = os.getenv("DB_NAME", "filmpoc")
-instance_connection_name = os.getenv("INSTANCE_CONNECTION_NAME", "minflix-451300:us-west2:streaming-db")
-
-# Connection string for Cloud SQL
-database_url = f"postgresql+pg8000://{db_user}:{db_password}@/{db_name}?unix_sock=/cloudsql/{instance_connection_name}/.s.PGSQL.5432"
-logger.info(f"Using database URL: {database_url.replace(db_password, '********')}")
+db_postgresql = "filmpoc"
+user_postgresql = "watcher"
+password_postgresql = "films"
+url_postgresql = f"postgresql://{user_postgresql}:{password_postgresql}@localhost/{db_postgresql}"
+engine = create_engine(url_postgresql, echo=True)
 
 
 # openssl rand -hex 32 to generate key(more on this later)
-SECRET_KEY = "80ebfb709b4ffc7acb52167b42388165d688a1035a01dd5dcf54990ea0faabe8"
+SECRET_KEY = "20404ba49993ee4b5af02b141b14b4fdd2d06ff3f855f84a35113c4d890c0b13"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 10
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
@@ -86,7 +78,7 @@ app = FastAPI(lifespan=lifespan)
 
 
 origins = [
-    "https://minflixhd.web.app",
+    "http://localhost:3000",
 ]
 
 
@@ -113,21 +105,12 @@ def verify_jwt_token(token: str) -> dict:
         # Decode the token and verify the signature using the secret key
         # The decode function also checks the expiration claim automatically
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-
-        # Check if it's a bearer token
-        if payload.get("token_type") != "bearer":
-            print("bearer probelem")
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token type",
-                headers={"WWW-Authenticate": "Bearer"}
-            )
-
+        print(f"The payload: {payload}")
         return payload
-        
-    except JWTError:
+
+    except JWTError as e:
         # This will catch issues like invalid signature, expired token, etc.
-        print("general error")
+        print(f"JWT error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
@@ -136,7 +119,7 @@ def verify_jwt_token(token: str) -> dict:
 
 
 @app.post("/registration")
-def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
+async def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
     statement = select(FilmUser).where(FilmUser.username == form_data.username)
     current_user = session.exec(statement).first()
     if current_user:
@@ -153,12 +136,12 @@ def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm = Dep
 
     data_token = TokenModel(id=current_user.id, profiles=[])
     data_token = data_token.model_dump()
-
-    return create_jwt_token(data_token)
+    the_token = create_jwt_token(data_token)
+    return the_token
 
 
 @app.post("/login")
-def login(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
+async def login(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
     statement = select(FilmUser).where(FilmUser.username == form_data.username)
     current_user = session.exec(statement).first()
     if current_user is None:
@@ -174,17 +157,19 @@ def login(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends())
 
     data_token = TokenModel(id=current_user.id, profiles=profile_data)
     data_token = data_token.model_dump()
+    the_token = create_jwt_token(data_token)
+    return the_token
 
-    return create_jwt_token(data_token)
 
-
-def get_current_filmuser(token: str = Depends(oauth2_scheme)) -> int:
+async def get_current_filmuser(token: str = Depends(oauth2_scheme)) -> int:
+    print(f"[INFO]: GET CURRENT FILMUSER TOKEN: {token}")
+    print(f"Type of token {type(token)}")
     session_data = verify_jwt_token(token)
     return session_data.get("id")
 
 
 @app.post("/addprofile")
-def add_profile(displayname: Annotated[str, Form()], session: SessionDep, current_filmuser: int = Depends(get_current_filmuser)) -> str:
+async def add_profile(displayname: Annotated[str, Form()], session: SessionDep, current_filmuser: Annotated[int, Depends(get_current_filmuser)]) -> str:
     current_user = session.get(FilmUser, current_filmuser)
     current_user.profiles.append(Profile(displayname=displayname))
     session.add(current_user)
@@ -199,10 +184,8 @@ def add_profile(displayname: Annotated[str, Form()], session: SessionDep, curren
 
     data_token = TokenModel(id=current_user.id, profiles=profile_data)
     data_token = data_token.model_dump()
-    print(type(data_token))
-    print(f"[INFO]: token being sent in dictionary form: {data_token}")
     the_token = create_jwt_token(data_token)
-    print(f"[INFO]: the token being sent in token form: {the_token}")
+
     return the_token
 
 
