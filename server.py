@@ -18,8 +18,9 @@ from token_models import *
 
 db_postgresql = "filmpoc"
 user_postgresql = "watcher"
-password_postgresql = "films"
-url_postgresql = f"postgresql://{user_postgresql}:{password_postgresql}@localhost/{db_postgresql}"
+password_postgresql = "T:->%I-iMQXOiqOt"
+instance_connection_name = "minflix-451300:us-west2:streaming-db"
+url_postgresql = f"postgresql+psycopg2://{user_postgresql}:{password_postgresql}@/{db_postgresql}?host=/cloudsql/{instance_connection_name}"
 engine = create_engine(url_postgresql, echo=True)
 
 
@@ -78,7 +79,7 @@ app = FastAPI(lifespan=lifespan)
 
 
 origins = [
-    "http://localhost:3000",
+    "https://minflixhd.web.app",
 ]
 
 
