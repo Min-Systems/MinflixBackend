@@ -4,8 +4,8 @@ import secrets
 from contextlib import asynccontextmanager
 from typing import Annotated, List
 from fastapi import Depends, FastAPI, Response, Form, HTTPException, status
-from sqlmodel import Session, SQLModel, create_engine, select
-from sqlalchemy import inspect, MetaData, Table
+from sqlmodel import Session, SQLModel, create_engine, select, Field
+from sqlalchemy import inspect, MetaData, Table, Column, String
 from sqlalchemy.orm import selectinload
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -31,6 +31,18 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 10
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
+# Create a custom FilmUser class that maps username to email
+# This overrides the imported one but maintains compatibility with existing code
+class FilmUser(SQLModel, table=True):
+    __tablename__ = "filmuser"
+    
+    id: Optional[int] = Field(default=None, primary_key=True)
+    username: str = Field(sa_column=Column("email", String))  # Map username to email column
+    password: str
+    date_registered: datetime.datetime
+    profiles: List["Profile"] = Relationship(back_populates="filmuser")
 
 
 def get_session():
@@ -71,8 +83,13 @@ async def lifespan(app: FastAPI):
         create_db_and_tables()
         print(f"{setup_db} db configured")
     elif setup_db == "Production":
-        create_db_and_tables()
-        print(f"{setup_db} db configured")
+        # In production, don't recreate tables but do test connection
+        try:
+            with engine.connect() as conn:
+                conn.execute("SELECT 1")
+            print(f"{setup_db} db connection verified")
+        except Exception as e:
+            print(f"Error connecting to database: {e}")
     yield
 
 
@@ -80,7 +97,8 @@ app = FastAPI(lifespan=lifespan)
 
 
 origins = [
-    "https://minflixhd.web.app/",
+    "https://minflixhd.web.app",  # Remove trailing slash
+    "http://localhost:3000",
     "https://minflixbackend-611864661290.us-west2.run.app"
 ]
 
@@ -131,9 +149,11 @@ async def root():
             "/registration", 
             "/addprofile", 
             "/health",
-            "/schema"
+            "/schema",
+            "/test-auth"
         ]
     }
+
 
 @app.get("/schema")
 async def inspect_schema():
@@ -158,6 +178,7 @@ async def inspect_schema():
             "error": str(e)
         }
 
+
 # Health check endpoint
 @app.get("/health")
 async def health_check():
@@ -180,48 +201,75 @@ async def health_check():
         }
 
 
+# Test endpoint for frontend to verify auth works
+@app.get("/test-auth")
+async def test_auth(current_filmuser: Annotated[int, Depends(get_current_filmuser)]):
+    return {"authenticated": True, "user_id": current_filmuser}
+
 
 @app.post("/registration")
 async def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
-    statement = select(FilmUser).where(FilmUser.username == form_data.username)
-    current_user = session.exec(statement).first()
-    if current_user:
-        print("User found")
-        raise HTTPException(status_code=404, detail="User Found Please Login")
+    try:
+        # Debug log
+        print(f"Registration attempt for username: {form_data.username}")
+        
+        statement = select(FilmUser).where(FilmUser.username == form_data.username)
+        current_user = session.exec(statement).first()
+        if current_user:
+            print("User found")
+            raise HTTPException(status_code=404, detail="User Found Please Login")
 
-    new_user = FilmUser(username=form_data.username, password=pwd_context.hash(
-        form_data.password), date_registered=datetime.datetime.now(), profiles=[])
-    session.add(new_user)
-    session.commit()
-    # check if we need to actually requery database, we have it in the session
-    statement = select(FilmUser).where(FilmUser.username == form_data.username)
-    current_user = session.exec(statement).first()
+        new_user = FilmUser(username=form_data.username, password=pwd_context.hash(
+            form_data.password), date_registered=datetime.datetime.now(), profiles=[])
+        session.add(new_user)
+        session.commit()
+        
+        # Debug log
+        print(f"User created with ID: {new_user.id}")
+        
+        # check if we need to actually requery database, we have it in the session
+        statement = select(FilmUser).where(FilmUser.username == form_data.username)
+        current_user = session.exec(statement).first()
 
-    data_token = TokenModel(id=current_user.id, profiles=[])
-    data_token = data_token.model_dump()
-    the_token = create_jwt_token(data_token)
-    return the_token
+        data_token = TokenModel(id=current_user.id, profiles=[])
+        data_token = data_token.model_dump()
+        the_token = create_jwt_token(data_token)
+        return the_token
+    except Exception as e:
+        print(f"Registration error: {e}")
+        raise HTTPException(status_code=500, detail=f"Registration error: {str(e)}")
 
 
 @app.post("/login")
 async def login(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
-    statement = select(FilmUser).where(FilmUser.username == form_data.username)
-    current_user = session.exec(statement).first()
-    if current_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
+    try:
+        # Debug log
+        print(f"Login attempt for username: {form_data.username}")
+        
+        statement = select(FilmUser).where(FilmUser.username == form_data.username)
+        current_user = session.exec(statement).first()
+        if current_user is None:
+            raise HTTPException(status_code=404, detail="User not found")
 
-    if not pwd_context.verify(form_data.password, current_user.password):
-        raise HTTPException(status_code=404, detail="Wrong Password")
+        if not pwd_context.verify(form_data.password, current_user.password):
+            raise HTTPException(status_code=404, detail="Wrong Password")
 
-    profile_data = []
-    for profile in current_user.profiles:
-        profile_data.append(TokenProfileDataModel(
-            id=profile.id, displayname=profile.displayname))
+        profile_data = []
+        for profile in current_user.profiles:
+            profile_data.append(TokenProfileDataModel(
+                id=profile.id, displayname=profile.displayname))
 
-    data_token = TokenModel(id=current_user.id, profiles=profile_data)
-    data_token = data_token.model_dump()
-    the_token = create_jwt_token(data_token)
-    return the_token
+        data_token = TokenModel(id=current_user.id, profiles=profile_data)
+        data_token = data_token.model_dump()
+        the_token = create_jwt_token(data_token)
+        
+        # Debug log
+        print(f"Login successful for user ID: {current_user.id}")
+        
+        return the_token
+    except Exception as e:
+        print(f"Login error: {e}")
+        raise HTTPException(status_code=500, detail=f"Login error: {str(e)}")
 
 
 async def get_current_filmuser(token: str = Depends(oauth2_scheme)) -> int:
@@ -233,23 +281,33 @@ async def get_current_filmuser(token: str = Depends(oauth2_scheme)) -> int:
 
 @app.post("/addprofile")
 async def add_profile(displayname: Annotated[str, Form()], session: SessionDep, current_filmuser: Annotated[int, Depends(get_current_filmuser)]) -> str:
-    current_user = session.get(FilmUser, current_filmuser)
-    current_user.profiles.append(Profile(displayname=displayname))
-    session.add(current_user)
-    session.commit()
+    try:
+        # Debug log
+        print(f"Adding profile '{displayname}' for user ID: {current_filmuser}")
+        
+        current_user = session.get(FilmUser, current_filmuser)
+        current_user.profiles.append(Profile(displayname=displayname))
+        session.add(current_user)
+        session.commit()
 
-    # check to see if we can just use the session user already
-    current_user = session.get(FilmUser, current_filmuser)
-    profile_data = []
-    for profile in current_user.profiles:
-        profile_data.append(TokenProfileDataModel(
-            id=profile.id, displayname=profile.displayname))
+        # check to see if we can just use the session user already
+        current_user = session.get(FilmUser, current_filmuser)
+        profile_data = []
+        for profile in current_user.profiles:
+            profile_data.append(TokenProfileDataModel(
+                id=profile.id, displayname=profile.displayname))
 
-    data_token = TokenModel(id=current_user.id, profiles=profile_data)
-    data_token = data_token.model_dump()
-    the_token = create_jwt_token(data_token)
-
-    return the_token
+        data_token = TokenModel(id=current_user.id, profiles=profile_data)
+        data_token = data_token.model_dump()
+        the_token = create_jwt_token(data_token)
+        
+        # Debug log
+        print(f"Profile added successfully, token generated")
+        
+        return the_token
+    except Exception as e:
+        print(f"Add profile error: {e}")
+        raise HTTPException(status_code=500, detail=f"Add profile error: {str(e)}")
 
 
 @app.post("/removeprofile")
