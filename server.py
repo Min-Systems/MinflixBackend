@@ -23,7 +23,7 @@ engine = create_engine(url_postgresql, echo=True)
 
 
 # openssl rand -hex 32 to generate key(more on this later)
-SECRET_KEY = "abc"
+SECRET_KEY = "a"*32
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 10
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
@@ -159,6 +159,10 @@ def login(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends())
         raise HTTPException(status_code=404, detail="Wrong Password")
 
     data_token = TokenModel(id=current_user.id, profiles=[])
+    profile_data = []
+    for profile in current_user.profiles:
+        profile_data.append(TokenProfileDataModel(
+            id=profile.id, displayname=profile.displayname))
     data_token = data_token.model_dump()
 
     return create_jwt_token(data_token)
@@ -185,8 +189,11 @@ def add_profile(displayname: Annotated[str, Form()], session: SessionDep, curren
 
     data_token = TokenModel(id=current_user.id, profiles=profile_data)
     data_token = data_token.model_dump()
-
-    return create_jwt_token(data_token)
+    print(type(data_token))
+    print(f"[INFO]: token being sent in dictionary form: {data_token}")
+    the_token = create_jwt_token(data_token)
+    print(f"[INFO]: the token being sent in token form: {the_token}")
+    return the_token
 
 
 @app.post("/removeprofile")
