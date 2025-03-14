@@ -238,6 +238,7 @@ async def root():
 
 @app.get("/health")
 async def health_check():
+    # add the session through the param later
     try:
         # Test database connection
         with Session(engine) as session:
