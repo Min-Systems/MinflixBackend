@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from typing import Annotated, List
 from fastapi import Depends, FastAPI, Response, Form, HTTPException, status
 from sqlmodel import Session, SQLModel, create_engine, select
+from sqlalchemy import inspect, MetaData, Table
 from sqlalchemy.orm import selectinload
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -160,15 +161,14 @@ async def inspect_schema():
 @app.get("/health")
 async def health_check():
     try:
-        # Try to connect to the database
-        inspector = inspect(engine)
-        tables = inspector.get_table_names()
+        # Try a simpler health check that doesn't rely on specific tables
+        with engine.connect() as conn:
+            result = conn.execute("SELECT 1").fetchone()
+            connected = result is not None
         
-        # Simple test
         return {
-            "status": "healthy",
-            "database": "connected",
-            "tables": tables,
+            "status": "healthy" if connected else "unhealthy",
+            "database": "connected" if connected else "disconnected",
             "timestamp": datetime.datetime.now().isoformat()
         }
     except Exception as e:
