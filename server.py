@@ -138,6 +138,7 @@ def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm = Dep
         form_data.password), date_registered=datetime.datetime.now(), profiles=[])
     session.add(new_user)
     session.commit()
+    # check if we need to actually requery database, we have it in the session
     statement = select(FilmUser).where(FilmUser.username == form_data.username)
     current_user = session.exec(statement).first()
 
@@ -149,7 +150,6 @@ def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm = Dep
 
 @app.post("/login")
 def login(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
-
     statement = select(FilmUser).where(FilmUser.username == form_data.username)
     current_user = session.exec(statement).first()
     if current_user is None:
@@ -176,6 +176,7 @@ def add_profile(displayname: Annotated[str, Form()], session: SessionDep, curren
     session.add(current_user)
     session.commit()
 
+    # check to see if we can just use the session user already
     current_user = session.get(FilmUser, current_filmuser)
     profile_data = []
     for profile in current_user.profiles:
@@ -191,4 +192,3 @@ def add_profile(displayname: Annotated[str, Form()], session: SessionDep, curren
 @app.post("/removeprofile")
 def remove_profile():
     print("Got remove")
-    pass
