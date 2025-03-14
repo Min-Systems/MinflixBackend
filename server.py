@@ -128,25 +128,47 @@ async def root():
             "/login", 
             "/registration", 
             "/addprofile", 
-            "/health"
+            "/health",
+            "/schema"
         ]
     }
 
+@app.get("/schema")
+async def inspect_schema():
+    try:
+        inspector = inspect(engine)
+        tables = inspector.get_table_names()
+        
+        schema_info = {}
+        for table_name in tables:
+            columns = inspector.get_columns(table_name)
+            schema_info[table_name] = [
+                {"name": col["name"], "type": str(col["type"])} 
+                for col in columns
+            ]
+        
+        return {
+            "tables": tables,
+            "schema": schema_info
+        }
+    except Exception as e:
+        return {
+            "error": str(e)
+        }
 
 # Health check endpoint
 @app.get("/health")
 async def health_check():
     try:
-        # Test database connection
-        with Session(engine) as session:
-            # Just count users to verify DB connection works
-            result = session.exec(select(FilmUser)).all()
-            user_count = len(result)
-            
+        # Try to connect to the database
+        inspector = inspect(engine)
+        tables = inspector.get_table_names()
+        
+        # Simple test
         return {
             "status": "healthy",
             "database": "connected",
-            "user_count": user_count,
+            "tables": tables,
             "timestamp": datetime.datetime.now().isoformat()
         }
     except Exception as e:
