@@ -59,7 +59,7 @@ def create_example_data(session: SessionDep):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    setup_db = os.environ.get("SETUPDB")
+    setup_db = "Production"
     if setup_db == "Example":
         drop_all_tables()
         create_db_and_tables()
