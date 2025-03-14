@@ -119,6 +119,45 @@ def verify_jwt_token(token: str) -> dict:
         )
 
 
+@app.get("/")
+async def root():
+    return {
+        "message": "MinFlix API is running",
+        "version": "1.0",
+        "endpoints": [
+            "/login", 
+            "/registration", 
+            "/addprofile", 
+            "/health"
+        ]
+    }
+
+
+# Health check endpoint
+@app.get("/health")
+async def health_check():
+    try:
+        # Test database connection
+        with Session(engine) as session:
+            # Just count users to verify DB connection works
+            result = session.exec(select(FilmUser)).all()
+            user_count = len(result)
+            
+        return {
+            "status": "healthy",
+            "database": "connected",
+            "user_count": user_count,
+            "timestamp": datetime.datetime.now().isoformat()
+        }
+    except Exception as e:
+        return {
+            "status": "unhealthy",
+            "error": str(e),
+            "timestamp": datetime.datetime.now().isoformat()
+        }
+
+
+
 @app.post("/registration")
 async def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
     statement = select(FilmUser).where(FilmUser.username == form_data.username)
