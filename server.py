@@ -90,8 +90,11 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Set-Cookie", "Access-Control-Allow-Headers", 
+                  "Access-Control-Allow-Origin", "Authorization"],
+    expose_headers=["Content-Type", "Authorization"],
+    max_age=600,
 )
 
 
@@ -183,25 +186,54 @@ async def health_check():
 
 
 @app.post("/registration")
-async def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
-    statement = select(FilmUser).where(FilmUser.username == form_data.username)
-    current_user = session.exec(statement).first()
-    if current_user:
-        print("User found")
-        raise HTTPException(status_code=404, detail="User Found Please Login")
+async def registration(
+    session: SessionDep, 
+    form_data: OAuth2PasswordRequestForm = Depends()
+) -> str:
+    try:
+        # Check if user already exists
+        print(f"Checking for existing user: {form_data.username}")
+        statement = select(FilmUser).where(FilmUser.username == form_data.username)
+        current_user = session.exec(statement).first()
+        
+        if current_user:
+            print(f"User found: {form_data.username}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, 
+                detail="User already exists. Please login instead."
+            )
 
-    new_user = FilmUser(username=form_data.username, password=pwd_context.hash(
-        form_data.password), date_registered=datetime.datetime.now(), profiles=[])
-    session.add(new_user)
-    session.commit()
-    # check if we need to actually requery database, we have it in the session
-    statement = select(FilmUser).where(FilmUser.username == form_data.username)
-    current_user = session.exec(statement).first()
-
-    data_token = TokenModel(id=current_user.id, profiles=[])
-    data_token = data_token.model_dump()
-    the_token = create_jwt_token(data_token)
-    return the_token
+        # Create new user
+        print(f"Creating new user: {form_data.username}")
+        hashed_password = pwd_context.hash(form_data.password)
+        new_user = FilmUser(
+            username=form_data.username, 
+            password=hashed_password, 
+            date_registered=datetime.datetime.now(), 
+            profiles=[]
+        )
+        
+        session.add(new_user)
+        session.commit()
+        session.refresh(new_user)
+        
+        # Create token with user data
+        data_token = TokenModel(id=new_user.id, profiles=[])
+        data_token = data_token.model_dump()
+        the_token = create_jwt_token(data_token)
+        
+        return the_token
+        
+    except HTTPException:
+        # Re-raise HTTP exceptions
+        raise
+    except Exception as e:
+        # Log the error and return a generic message
+        print(f"Registration error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Registration failed: {str(e)}"
+        )
 
 
 @app.post("/login")
