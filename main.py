@@ -233,10 +233,12 @@ async def test_db():
 
 @app.get("/")
 async def root():
+    print("Root route reached")
     return {"message": "MinFlix Backend is running"}
 
 @app.get("/health")
 async def health_check():
+    # add the session through the param later
     try:
         # Test database connection
         with Session(engine) as session:
