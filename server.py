@@ -96,20 +96,25 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 
+# Updated origins list with both https and http versions, with and without trailing slashes
 origins = [
-    "https://minflixhd.web.app",  # Remove trailing slash
+    "https://minflixhd.web.app",
+    "https://minflixhd.web.app/",
     "http://localhost:3000",
+    "http://localhost:3000/",
     "https://minflixbackend-611864661290.us-west2.run.app",
-    "."
+    "https://minflixbackend-611864661290.us-west2.run.app/"
 ]
 
 
+# Apply CORS middleware with additional configuration
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
+    max_age=86400,  # Cache CORS preflight requests for 24 hours
 )
 
 
@@ -209,7 +214,7 @@ async def test_auth(current_filmuser: Annotated[int, Depends(get_current_filmuse
 
 
 @app.post("/registration")
-async def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
+async def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()):
     try:
         # Debug log
         print(f"Registration attempt for username: {form_data.username}")
@@ -235,14 +240,16 @@ async def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm
         data_token = TokenModel(id=current_user.id, profiles=[])
         data_token = data_token.model_dump()
         the_token = create_jwt_token(data_token)
-        return the_token
+        
+        # Return JWT token as a JSON object
+        return {"access_token": the_token, "token_type": "bearer"}
     except Exception as e:
         print(f"Registration error: {e}")
         raise HTTPException(status_code=500, detail=f"Registration error: {str(e)}")
 
 
 @app.post("/login")
-async def login(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
+async def login(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()):
     try:
         # Debug log
         print(f"Login attempt for username: {form_data.username}")
@@ -267,7 +274,8 @@ async def login(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depe
         # Debug log
         print(f"Login successful for user ID: {current_user.id}")
         
-        return the_token
+        # Return JWT token as a JSON object
+        return {"access_token": the_token, "token_type": "bearer"}
     except Exception as e:
         print(f"Login error: {e}")
         raise HTTPException(status_code=500, detail=f"Login error: {str(e)}")
@@ -281,7 +289,7 @@ async def get_current_filmuser(token: str = Depends(oauth2_scheme)) -> int:
 
 
 @app.post("/addprofile")
-async def add_profile(displayname: Annotated[str, Form()], session: SessionDep, current_filmuser: Annotated[int, Depends(get_current_filmuser)]) -> str:
+async def add_profile(displayname: Annotated[str, Form()], session: SessionDep, current_filmuser: Annotated[int, Depends(get_current_filmuser)]):
     try:
         # Debug log
         print(f"Adding profile '{displayname}' for user ID: {current_filmuser}")
@@ -305,7 +313,8 @@ async def add_profile(displayname: Annotated[str, Form()], session: SessionDep, 
         # Debug log
         print(f"Profile added successfully, token generated")
         
-        return the_token
+        # Return JWT token as a JSON object
+        return {"access_token": the_token, "token_type": "bearer"}
     except Exception as e:
         print(f"Add profile error: {e}")
         raise HTTPException(status_code=500, detail=f"Add profile error: {str(e)}")
