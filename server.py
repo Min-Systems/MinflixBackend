@@ -17,13 +17,13 @@ from token_models import *
 
 db_postgresql = "filmpoc"
 user_postgresql = "watcher"
-password_postgresql = "films"
+password_postgresql = "T:->%I-iMQXOiqOt"
 url_postgresql = f"postgresql://{user_postgresql}:{password_postgresql}@localhost/{db_postgresql}"
 engine = create_engine(url_postgresql, echo=True)
 
 
 # openssl rand -hex 32 to generate key(more on this later)
-SECRET_KEY = "a"*32
+SECRET_KEY = "80ebfb709b4ffc7acb52167b42388165d688a1035a01dd5dcf54990ea0faabe8"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 10
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
@@ -77,7 +77,7 @@ app = FastAPI(lifespan=lifespan)
 
 
 origins = [
-    "http://localhost:3000",
+    "https://minflixhd.web.app",
 ]
 
 
