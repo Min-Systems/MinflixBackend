@@ -158,11 +158,12 @@ def login(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends())
     if not pwd_context.verify(form_data.password, current_user.password):
         raise HTTPException(status_code=404, detail="Wrong Password")
 
-    data_token = TokenModel(id=current_user.id, profiles=[])
     profile_data = []
     for profile in current_user.profiles:
         profile_data.append(TokenProfileDataModel(
             id=profile.id, displayname=profile.displayname))
+
+    data_token = TokenModel(id=current_user.id, profiles=profile_data)
     data_token = data_token.model_dump()
 
     return create_jwt_token(data_token)
