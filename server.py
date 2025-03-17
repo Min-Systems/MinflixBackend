@@ -11,24 +11,44 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import jwt, JWTError
 from passlib.context import CryptContext
+from dotenv import load_dotenv
 from film_models import *
 from user_models import *
 from example_data import *
 from token_models import *
 
+# Check if we're running in Cloud Run or locally
+# K_SERVICE environment variable is automatically set in Cloud Run
+is_production = os.environ.get("K_SERVICE") is not None
 
-db_postgresql = "filmpoc"
-user_postgresql = "watcher"
-password_postgresql = "T:->%I-iMQXOiqOt"
-instance_connection_name = "minflix-451300:us-west2:streaming-db"
-url_postgresql = f"postgresql+psycopg2://{user_postgresql}:{password_postgresql}@/{db_postgresql}?host=/cloudsql/{instance_connection_name}"
+# Load the appropriate .env file
+if is_production:
+    print("Running in production mode")
+    load_dotenv(".env.production")
+else:
+    print("Running in local mode")
+    load_dotenv(".env.local")
+
+# Database Configuration
+db_name = os.getenv("DB_NAME", "")
+db_user = os.getenv("DB_USER", "")
+db_password = os.getenv("DB_PASSWORD", "")
+instance_connection_name = os.getenv("INSTANCE_CONNECTION_NAME", "")
+
+# Determine database URL based on environment
+if is_production and instance_connection_name:
+    # Cloud SQL connection for production
+    url_postgresql = f"postgresql+psycopg2://{db_user}:{db_password}@/{db_name}?host=/cloudsql/{instance_connection_name}"
+else:
+    # Local database connection for local
+    url_postgresql = os.getenv("DATABASE_URL_LOCAL")
+
 engine = create_engine(url_postgresql, echo=True)
 
-
 # openssl rand -hex 32 to generate key(more on this later)
-SECRET_KEY = "20404ba49993ee4b5af02b141b14b4fdd2d06ff3f855f84a35113c4d890c0b13"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 10
+SECRET_KEY = os.getenv("SECRET_KEY", "")
+ALGORITHM = os.getenv("ALGORITHM", "")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", ""))
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -59,7 +79,9 @@ def create_example_data(session: SessionDep):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    setup_db = "Production"
+    # Get setup mode from environment variable (Production is default)
+    setup_db = os.getenv("SETUPDB", "Production")
+    print(f"Database setup mode: {setup_db}")    
     if setup_db == "Example":
         drop_all_tables()
         create_db_and_tables()
@@ -80,21 +102,16 @@ app = FastAPI(lifespan=lifespan)
 
 
 origins = [
-    "https://minflixhd.web.app",
-    # "https://minflixbackend-611864661290.us-west2.run.app",
-    # "https://minflixbackend-611864661290.us-west2.run.app/registration"
+     "https://minflixhd.web.app",
+     "http://localhost:3000",
 ]
-
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["Content-Type", "Set-Cookie", "Access-Control-Allow-Headers", 
-                  "Access-Control-Allow-Origin", "Authorization"],
-    expose_headers=["Content-Type", "Authorization"],
-    max_age=600,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
@@ -130,6 +147,7 @@ async def root():
     return {
         "message": "MinFlix API is running",
         "version": "1.0",
+        "environment": "production" if is_production else "local",
         "endpoints": [
             "/login", 
             "/registration", 
@@ -138,6 +156,7 @@ async def root():
             "/schema"
         ]
     }
+
 
 @app.get("/schema")
 async def inspect_schema():
@@ -162,18 +181,20 @@ async def inspect_schema():
             "error": str(e)
         }
 
+
 # Health check endpoint
 @app.get("/health")
 async def health_check():
     try:
         # Try a simpler health check that doesn't rely on specific tables
         with engine.connect() as conn:
-            result = conn.execute("SELECT 1").fetchone()
+            result = conn.execute(select(1)).fetchone()
             connected = result is not None
         
         return {
             "status": "healthy" if connected else "unhealthy",
             "database": "connected" if connected else "disconnected",
+            "environment": "production" if is_production else "local",
             "timestamp": datetime.datetime.now().isoformat()
         }
     except Exception as e:
@@ -182,7 +203,6 @@ async def health_check():
             "error": str(e),
             "timestamp": datetime.datetime.now().isoformat()
         }
-
 
 
 @app.post("/registration")
