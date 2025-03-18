@@ -12,6 +12,13 @@ RUN pip install --no-cache-dir gunicorn
 # Copy the application code
 COPY . .
 
+# Envrionment variables
+ENV DB_NAME=filmpoc
+ENV INSTANCE_CONNECTION_NAME=minflix-451300:us-west2:streaming-db
+ENV SETUPDB=Production
+ENV ALGORITHM=HS256
+ENV ACCESS_TOKEN_EXPIRE_MINUTES=10
+
 # Expose the port - this is just documentation, Cloud Run ignores it
 EXPOSE 8080
 
