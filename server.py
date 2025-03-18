@@ -24,8 +24,8 @@ db_user = os.getenv("DB_USER", "watcher")
 db_password = os.getenv("DB_PASSWORD", "films")
 instance_connection_name = os.getenv("INSTANCE_CONNECTION_NAME", "")
 setup_db = os.getenv("SETUPDB", "Dynamic")
-secret_key = os.getenv("SECRET_KEY", "80ebfb709b4ffc7acb52167b42388165d688a1035a01dd5dcf54990ea0faabe8")
-algorithm = os.getenv("ALGORITHM", "HS256")
+SECRET_KEY = os.getenv("SECRET_KEY", "80ebfb709b4ffc7acb52167b42388165d688a1035a01dd5dcf54990ea0faabe8")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
 
 # Loads production database or local database
 if instance_connection_name:
