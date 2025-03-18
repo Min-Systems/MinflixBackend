@@ -17,38 +17,30 @@ from user_models import *
 from example_data import *
 from token_models import *
 
-# Check if we're running in Cloud Run or locally
-# K_SERVICE environment variable is automatically set in Cloud Run
-is_production = os.environ.get("K_SERVICE") is not None
-
-# Load the appropriate .env file
-if is_production:
-    print("Running in production mode")
-    load_dotenv(".env.production")
-else:
-    print("Running in local mode")
-    load_dotenv(".env.local")
-
-# Database Configuration
-db_name = os.getenv("DB_NAME", "")
-db_user = os.getenv("DB_USER", "")
-db_password = os.getenv("DB_PASSWORD", "")
+# Localhost environment variables for local deployment
+# Dockerfile has production environment variables
+db_name = os.getenv("DB_NAME", "filmpoc")
+db_user = os.getenv("DB_USER", "watcher") 
+db_password = os.getenv("DB_PASSWORD", "films")
 instance_connection_name = os.getenv("INSTANCE_CONNECTION_NAME", "")
+setup_db = os.getenv("SETUPDB", "Dynamic")
+secret_key = os.getenv("SECRET_KEY", "80ebfb709b4ffc7acb52167b42388165d688a1035a01dd5dcf54990ea0faabe8")
+algorithm = os.getenv("ALGORITHM", "HS256")
 
-# Determine database URL based on environment
-if is_production and instance_connection_name:
-    # Cloud SQL connection for production
+# Loads production database or local database
+if instance_connection_name:
+    # Google Cloud
     url_postgresql = f"postgresql+psycopg2://{db_user}:{db_password}@/{db_name}?host=/cloudsql/{instance_connection_name}"
 else:
-    # Local database connection for local
-    url_postgresql = os.getenv("DATABASE_URL_LOCAL")
+    # Local
+    url_postgresql = f"postgresql://{db_user}:{db_password}@localhost/{db_name}"
 
 engine = create_engine(url_postgresql, echo=True)
 
 # openssl rand -hex 32 to generate key(more on this later)
-SECRET_KEY = os.getenv("SECRET_KEY", "")
-ALGORITHM = os.getenv("ALGORITHM", "")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", ""))
+# SECRET_KEY = os.getenv("SECRET_KEY", "")
+# ALGORITHM = os.getenv("ALGORITHM", "")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "10"))
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -79,8 +71,7 @@ def create_example_data(session: SessionDep):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Get setup mode from environment variable (Production is default)
-    setup_db = os.getenv("SETUPDB", "Production")
+    # Get setup mode from environment variable (Dynamic is default)
     print(f"Database setup mode: {setup_db}")    
     if setup_db == "Example":
         drop_all_tables()
@@ -147,7 +138,7 @@ async def root():
     return {
         "message": "MinFlix API is running",
         "version": "1.0",
-        "environment": "production" if is_production else "local",
+        "environment": "production" if instance_connection_name else "local",
         "endpoints": [
             "/login", 
             "/registration", 
