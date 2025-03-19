@@ -1,274 +1,299 @@
 import os
-import logging
-import traceback
+import datetime
+import secrets
 from contextlib import asynccontextmanager
-from typing import Annotated, List, Dict, Any
-from fastapi import Depends, FastAPI, Response, HTTPException
-from sqlmodel import Session, SQLModel, create_engine, select, Field
+from typing import Annotated, List
+from fastapi import Depends, FastAPI, Response, Form, HTTPException, status
+from sqlmodel import Session, SQLModel, create_engine, select
+from sqlalchemy import inspect, MetaData, Table
 from sqlalchemy.orm import selectinload
 from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
-
-# Set up detailed logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
-
-# Get environment variables for database connection
-db_user = os.getenv("DB_USER", "watcher")
-db_password = os.getenv("DB_PASSWORD", "T:->%I-iMQXOiqOt")
-db_name = os.getenv("DB_NAME", "filmpoc")
-instance_connection_name = os.getenv("INSTANCE_CONNECTION_NAME", "minflix-451300:us-west2:streaming-db")
-
-# Connection string for Cloud SQL
-database_url = f"postgresql+pg8000://{db_user}:{db_password}@/{db_name}?unix_sock=/cloudsql/{instance_connection_name}/.s.PGSQL.5432"
-logger.info(f"Using database URL: {database_url.replace(db_password, '********')}")
-
-try:
-    # Enable echo to see all SQL queries
-    engine = create_engine(database_url, echo=True, pool_pre_ping=True)
-    logger.info("Database engine created successfully")
-except Exception as e:
-    logger.error(f"Failed to create database engine: {str(e)}")
-    logger.error(traceback.format_exc())
-    # don't raise
-
-def get_session():
-    try:
-        with Session(engine) as session:
-            yield session
-    except Exception as e:
-        logger.error(f"Session creation failed: {str(e)}")
-        logger.error(traceback.format_exc())
-        raise HTTPException(status_code=500, detail=f"Database connection error: {str(e)}")
-
-SessionDep = Annotated[Session, Depends(get_session)]
-
-def drop_all_tables():
-    """Drop all tables from the database"""
-    try:
-        SQLModel.metadata.drop_all(engine)
-        logger.info("All tables dropped successfully")
-        return True
-    except Exception as e:
-        logger.error(f"Failed to drop tables: {str(e)}")
-        logger.error(traceback.format_exc())
-        return False
-
-def create_db_and_tables():
-    try:
-        SQLModel.metadata.create_all(engine)
-        logger.info("Database tables created successfully")
-        return True
-    except Exception as e:
-        logger.error(f"Failed to create tables: {str(e)}")
-        logger.error(traceback.format_exc())
-        return False
-
-# Import models after engine is created but before creating tables
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from jose import jwt, JWTError
+from passlib.context import CryptContext
+from dotenv import load_dotenv
 from film_models import *
 from user_models import *
 from example_data import *
+from token_models import *
+
+# Localhost environment variables for local deployment
+# Dockerfile has production environment variables
+db_name = os.getenv("DB_NAME", "filmpoc")
+db_user = os.getenv("DB_USER", "watcher") 
+db_password = os.getenv("DB_PASSWORD", "films")
+instance_connection_name = os.getenv("INSTANCE_CONNECTION_NAME", "")
+setup_db = os.getenv("SETUPDB", "Dynamic")
+
+# Loads production database or local database
+if instance_connection_name:
+    # Google Cloud
+    url_postgresql = f"postgresql+psycopg2://{db_user}:{db_password}@/{db_name}?host=/cloudsql/{instance_connection_name}"
+else:
+    # Local
+    url_postgresql = f"postgresql://{db_user}:{db_password}@localhost/{db_name}"
+
+engine = create_engine(url_postgresql, echo=True)
+
+# openssl rand -hex 32 to generate key(more on this later)
+SECRET_KEY = os.getenv("SECRET_KEY", "80ebfb709b4ffc7acb52167b42388165d688a1035a01dd5dcf54990ea0faabe8")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "10"))
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
+def get_session():
+    with Session(engine) as session:
+        yield session
+
+
+SessionDep = Annotated[Session, Depends(get_session)]
+
+
+def drop_all_tables():
+    SQLModel.metadata.drop_all(engine)
+
+
+def create_db_and_tables():
+    SQLModel.metadata.create_all(engine)
+
 
 def create_example_data(session: SessionDep):
-    try:
-        # Add example films
-        logger.info("Adding example films...")
-        for film in EXAMPLEFILMS:
-            session.add(film)
-            
-        # Add example users
-        logger.info("Adding example users...")
-        for user in EXAMPLEUSERS:
-            session.add(user)
-            
-        session.commit()
-        logger.info("Example data created successfully")
-        return True
-    except Exception as e:
-        logger.error(f"Failed to create example data: {str(e)}")
-        logger.error(traceback.format_exc())
-        session.rollback()
-        return False
+    for film in EXAMPLEFILMS:
+        session.add(film)
+    for user in EXAMPLEUSERS:
+        session.add(user)
+    session.commit()
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    try:
-        # Only create tables on startup, don't reset automatically
+    # Get setup mode from environment variable (Dynamic is default)
+    print(f"Database setup mode: {setup_db}")    
+    if setup_db == "Example":
+        drop_all_tables()
         create_db_and_tables()
         with Session(engine) as session:
-            # Check if we need to add example data
-            films = session.exec(select(Film)).all()
-            if not films:
-                create_example_data(session)
-    except Exception as e:
-        logger.error(f"Startup database initialization failed: {str(e)}")
-        logger.error(traceback.format_exc())
+            create_example_data(session)
+        print(f"{setup_db} db configured")
+    elif setup_db == "Dynamic":
+        drop_all_tables()
+        create_db_and_tables()
+        print(f"{setup_db} db configured")
+    elif setup_db == "Production":
+        create_db_and_tables()
+        print(f"{setup_db} db configured")
     yield
+
 
 app = FastAPI(lifespan=lifespan)
 
+
+origins = [
+     "https://minflixhd.web.app",
+     "http://localhost:3000",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-@app.get("/reset-database")
-async def reset_database():
-    """Reset the entire database - drop all tables and recreate them with example data"""
-    try:
-        # Drop all tables
-        if not drop_all_tables():
-            return {"status": "error", "message": "Failed to drop tables"}
-            
-        # Create tables
-        if not create_db_and_tables():
-            return {"status": "error", "message": "Failed to create tables"}
-            
-        # Add example data
-        with Session(engine) as session:
-            if not create_example_data(session):
-                return {"status": "error", "message": "Failed to add example data"}
-            
-        return {"status": "success", "message": "Database reset successfully"}
-    except Exception as e:
-        logger.error(f"Database reset failed: {str(e)}")
-        logger.error(traceback.format_exc())
-        return {"status": "error", "message": f"Failed to reset database: {str(e)}"}
 
-@app.get("/films")
-async def read_all_films(session: SessionDep):
+def create_jwt_token(data: dict) -> str:
+    to_encode = data.copy()
+    expire = datetime.datetime.now(
+        datetime.timezone.utc) + datetime.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire, "token_type": "bearer"})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+
+def verify_jwt_token(token: str) -> dict:
     try:
-        statement = select(Film).options(
-            selectinload(Film.film_cast),
-            selectinload(Film.production_team)
+        # Decode the token and verify the signature using the secret key
+        # The decode function also checks the expiration claim automatically
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        print(f"The payload: {payload}")
+        return payload
+
+    except JWTError as e:
+        # This will catch issues like invalid signature, expired token, etc.
+        print(f"JWT error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"}
         )
-        films = session.exec(statement).all()
-        
-        # Format as text similar to users endpoint
-        data = ""
-        for film in films:
-            # Basic film info
-            data += f"id: {film.id} title: {film.title}, length: {film.length}, "
-            data += f"location: {film.technical_location}, producer: {film.producer}\n"
-            
-            # Cast info
-            data += "Cast:\n"
-            for cast in film.film_cast:
-                data += f"  {cast.name} as {cast.role}\n"
-                
-            # Production team
-            data += "Production Team:\n"
-            for member in film.production_team:
-                data += f"  {member.name} - {member.role}\n"
-                
-            data += "\n"  # Add blank line between films
-            
-        return Response(content=data)
-    except Exception as e:
-        logger.error(f"Error retrieving films: {str(e)}")
-        logger.error(traceback.format_exc())
-        raise HTTPException(status_code=500, detail=f"Failed to retrieve films: {str(e)}")
 
-@app.get("/users")
-async def read_all_users(session: SessionDep):
-    try:
-        statement = select(FilmUser)
-        users = session.exec(statement).all()
-
-        data = ""
-        for user in users:
-            data += f"id: {user.id}, email: {user.email}, password: {user.password}, date_registered: {user.date_registered}\n"
-            for profile in user.profiles:
-                data += f"displayname: {profile.displayname}\n"
-                for search in profile.search_history:
-                    data += f"search_query: {search.search_query}\n"
-                for favorite in profile.favorites:
-                    data += f"favorite: {favorite.favorited_date} film_id: {favorite.film_id}\n"
-                for watchlater in profile.watch_later:
-                    data += f"dateadded: {watchlater.dateadded} film_id: {watchlater.film_id}\n"
-                for watchhistory in profile.watch_history:
-                    data += f"datewatched: {watchhistory.datewatched} film_id: {watchhistory.film_id}\n"
-
-        return Response(content=data)
-    except Exception as e:
-        logger.error(f"Error in users endpoint: {str(e)}")
-        logger.error(traceback.format_exc())
-        raise HTTPException(status_code=500, detail=f"Database error in users endpoint: {str(e)}")
-
-@app.get("/db-test")
-async def test_db():
-    """Test database connection and table structure"""
-    try:
-        # Test basic connection
-        with Session(engine) as session:
-            result = session.execute("SELECT 1").fetchone()
-            
-            # Get table info
-            tables_info = {}
-            for table in SQLModel.metadata.tables.keys():
-                try:
-                    # Try to get columns for each table
-                    columns = session.execute(f"SELECT column_name FROM information_schema.columns WHERE table_name = '{table}'").fetchall()
-                    tables_info[table] = [col[0] for col in columns]
-                except Exception as table_error:
-                    tables_info[table] = f"Error: {str(table_error)}"
-            
-            return {
-                "status": "Connected",
-                "basic_query": result,
-                "tables": tables_info
-            }
-    except Exception as e:
-        return {
-            "status": "Failed",
-            "error": str(e),
-            "traceback": traceback.format_exc()
-        }
 
 @app.get("/")
 async def root():
-    print("Root route reached")
-    return {"message": "MinFlix Backend is running"}
+    return {
+        "message": "MinFlix API is running",
+        "version": "1.0",
+        "environment": "production" if instance_connection_name else "local",
+        "endpoints": [
+            "/login", 
+            "/registration", 
+            "/addprofile", 
+            "/health",
+            "/schema"
+        ]
+    }
 
-@app.get("/health")
-async def health_check():
-    # add the session through the param later
+
+@app.get("/schema")
+async def inspect_schema():
     try:
-        # Test database connection
-        with Session(engine) as session:
-            try:
-                # Check if Film table exists
-                film_count = session.exec(select(Film)).count()
-                db_status = "connected"
-            except Exception as e:
-                film_count = 0
-                db_status = f"table error: {str(e)}"
-                
+        inspector = inspect(engine)
+        tables = inspector.get_table_names()
+        
+        schema_info = {}
+        for table_name in tables:
+            columns = inspector.get_columns(table_name)
+            schema_info[table_name] = [
+                {"name": col["name"], "type": str(col["type"])} 
+                for col in columns
+            ]
+        
         return {
-            "status": "healthy",
-            "database": db_status,
-            "film_count": film_count,
-            "environment": {
-                "instance_name": instance_connection_name,
-                "db_name": db_name,
-                "db_user": db_user
-            }
+            "tables": tables,
+            "schema": schema_info
         }
     except Exception as e:
-        logger.error(f"Health check failed: {str(e)}")
-        logger.error(traceback.format_exc())
         return {
-            "status": "unhealthy",
-            "database": "disconnected",
             "error": str(e)
         }
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8080))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+
+# Health check endpoint
+@app.get("/health")
+async def health_check():
+    try:
+        # Try a simpler health check that doesn't rely on specific tables
+        with engine.connect() as conn:
+            result = conn.execute(select(1)).fetchone()
+            connected = result is not None
+        
+        return {
+            "status": "healthy" if connected else "unhealthy",
+            "database": "connected" if connected else "disconnected",
+            "environment": "production" if instance_connection_name else "local",
+            "timestamp": datetime.datetime.now().isoformat()
+        }
+    except Exception as e:
+        return {
+            "status": "unhealthy",
+            "error": str(e),
+            "timestamp": datetime.datetime.now().isoformat()
+        }
+
+
+@app.post("/registration")
+async def registration(
+    session: SessionDep, 
+    form_data: OAuth2PasswordRequestForm = Depends()
+) -> str:
+    try:
+        # Check if user already exists
+        print(f"Checking for existing user: {form_data.username}")
+        statement = select(FilmUser).where(FilmUser.username == form_data.username)
+        current_user = session.exec(statement).first()
+        
+        if current_user:
+            print(f"User found: {form_data.username}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, 
+                detail="User already exists. Please login instead."
+            )
+
+        # Create new user
+        print(f"Creating new user: {form_data.username}")
+        hashed_password = pwd_context.hash(form_data.password)
+        new_user = FilmUser(
+            username=form_data.username, 
+            password=hashed_password, 
+            date_registered=datetime.datetime.now(), 
+            profiles=[]
+        )
+        
+        session.add(new_user)
+        session.commit()
+        session.refresh(new_user)
+        
+        # Create token with user data
+        data_token = TokenModel(id=new_user.id, profiles=[])
+        data_token = data_token.model_dump()
+        the_token = create_jwt_token(data_token)
+        
+        return the_token
+        
+    except HTTPException:
+        # Re-raise HTTP exceptions
+        raise
+    except Exception as e:
+        # Log the error and return a generic message
+        print(f"Registration error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Registration failed: {str(e)}"
+        )
+
+
+@app.post("/login")
+async def login(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
+    statement = select(FilmUser).where(FilmUser.username == form_data.username)
+    current_user = session.exec(statement).first()
+    if current_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if not pwd_context.verify(form_data.password, current_user.password):
+        raise HTTPException(status_code=404, detail="Wrong Password")
+
+    profile_data = []
+    for profile in current_user.profiles:
+        profile_data.append(TokenProfileDataModel(
+            id=profile.id, displayname=profile.displayname))
+
+    data_token = TokenModel(id=current_user.id, profiles=profile_data)
+    data_token = data_token.model_dump()
+    the_token = create_jwt_token(data_token)
+    return the_token
+
+
+async def get_current_filmuser(token: str = Depends(oauth2_scheme)) -> int:
+    print(f"[INFO]: GET CURRENT FILMUSER TOKEN: {token}")
+    print(f"Type of token {type(token)}")
+    session_data = verify_jwt_token(token)
+    return session_data.get("id")
+
+
+@app.post("/addprofile")
+async def add_profile(displayname: Annotated[str, Form()], session: SessionDep, current_filmuser: Annotated[int, Depends(get_current_filmuser)]) -> str:
+    current_user = session.get(FilmUser, current_filmuser)
+    current_user.profiles.append(Profile(displayname=displayname))
+    session.add(current_user)
+    session.commit()
+
+    # check to see if we can just use the session user already
+    current_user = session.get(FilmUser, current_filmuser)
+    profile_data = []
+    for profile in current_user.profiles:
+        profile_data.append(TokenProfileDataModel(
+            id=profile.id, displayname=profile.displayname))
+
+    data_token = TokenModel(id=current_user.id, profiles=profile_data)
+    data_token = data_token.model_dump()
+    the_token = create_jwt_token(data_token)
+
+    return the_token
+
+
+@app.post("/removeprofile")
+def remove_profile():
+    print("Got remove")
