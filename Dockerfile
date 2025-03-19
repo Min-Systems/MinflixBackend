@@ -24,4 +24,4 @@ EXPOSE 8080
 
 # Use Gunicorn as the production server
 # Cloud Run sets PORT env variable - we use it to bind the server
-CMD exec gunicorn --bind :$PORT --workers 1 --worker-class uvicorn.workers.UvicornWorker --threads 8 server:app
+CMD exec gunicorn --bind :$PORT --workers 1 --worker-class uvicorn.workers.UvicornWorker --threads 8 main:app
