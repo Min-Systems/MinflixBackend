@@ -24,8 +24,6 @@ db_user = os.getenv("DB_USER", "watcher")
 db_password = os.getenv("DB_PASSWORD", "films")
 instance_connection_name = os.getenv("INSTANCE_CONNECTION_NAME", "")
 setup_db = os.getenv("SETUPDB", "Dynamic")
-SECRET_KEY = os.getenv("SECRET_KEY", "80ebfb709b4ffc7acb52167b42388165d688a1035a01dd5dcf54990ea0faabe8")
-ALGORITHM = os.getenv("ALGORITHM", "HS256")
 
 # Loads production database or local database
 if instance_connection_name:
@@ -38,8 +36,8 @@ else:
 engine = create_engine(url_postgresql, echo=True)
 
 # openssl rand -hex 32 to generate key(more on this later)
-# SECRET_KEY = os.getenv("SECRET_KEY", "")
-# ALGORITHM = os.getenv("ALGORITHM", "")
+SECRET_KEY = os.getenv("SECRET_KEY", "80ebfb709b4ffc7acb52167b42388165d688a1035a01dd5dcf54990ea0faabe8")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "10"))
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -185,7 +183,7 @@ async def health_check():
         return {
             "status": "healthy" if connected else "unhealthy",
             "database": "connected" if connected else "disconnected",
-            "environment": "production" if is_production else "local",
+            "environment": "production" if instance_connection_name else "local",
             "timestamp": datetime.datetime.now().isoformat()
         }
     except Exception as e:
