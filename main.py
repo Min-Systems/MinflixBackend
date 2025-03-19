@@ -20,7 +20,7 @@ from token_models import *
 # Localhost environment variables for local deployment
 # Dockerfile has production environment variables
 db_name = os.getenv("DB_NAME", "filmpoc")
-db_user = os.getenv("DB_USER", "watcher") 
+db_user = os.getenv("DB_USER", "watcher")
 db_password = os.getenv("DB_PASSWORD", "films")
 instance_connection_name = os.getenv("INSTANCE_CONNECTION_NAME", "")
 setup_db = os.getenv("SETUPDB", "Dynamic")
@@ -36,9 +36,11 @@ else:
 engine = create_engine(url_postgresql, echo=True)
 
 # openssl rand -hex 32 to generate key(more on this later)
-SECRET_KEY = os.getenv("SECRET_KEY", "80ebfb709b4ffc7acb52167b42388165d688a1035a01dd5dcf54990ea0faabe8")
+SECRET_KEY = os.getenv(
+    "SECRET_KEY", "80ebfb709b4ffc7acb52167b42388165d688a1035a01dd5dcf54990ea0faabe8")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "10"))
+ACCESS_TOKEN_EXPIRE_MINUTES = int(
+    os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "10"))
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -70,7 +72,7 @@ def create_example_data(session: SessionDep):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Get setup mode from environment variable (Dynamic is default)
-    print(f"Database setup mode: {setup_db}")    
+    print(f"Database setup mode: {setup_db}")
     if setup_db == "Example":
         drop_all_tables()
         create_db_and_tables()
@@ -91,8 +93,8 @@ app = FastAPI(lifespan=lifespan)
 
 
 origins = [
-     "https://minflixhd.web.app",
-     "http://localhost:3000",
+    "https://minflixhd.web.app",
+    "http://localhost:3000",
 ]
 
 app.add_middleware(
@@ -138,9 +140,9 @@ async def root():
         "version": "1.0",
         "environment": "production" if instance_connection_name else "local",
         "endpoints": [
-            "/login", 
-            "/registration", 
-            "/addprofile", 
+            "/login",
+            "/registration",
+            "/addprofile",
             "/health",
             "/schema"
         ]
@@ -152,15 +154,15 @@ async def inspect_schema():
     try:
         inspector = inspect(engine)
         tables = inspector.get_table_names()
-        
+
         schema_info = {}
         for table_name in tables:
             columns = inspector.get_columns(table_name)
             schema_info[table_name] = [
-                {"name": col["name"], "type": str(col["type"])} 
+                {"name": col["name"], "type": str(col["type"])}
                 for col in columns
             ]
-        
+
         return {
             "tables": tables,
             "schema": schema_info
@@ -179,7 +181,7 @@ async def health_check():
         with engine.connect() as conn:
             result = conn.execute(select(1)).fetchone()
             connected = result is not None
-        
+
         return {
             "status": "healthy" if connected else "unhealthy",
             "database": "connected" if connected else "disconnected",
@@ -195,20 +197,18 @@ async def health_check():
 
 
 @app.post("/registration")
-async def registration(
-    session: SessionDep, 
-    form_data: OAuth2PasswordRequestForm = Depends()
-) -> str:
+async def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
     try:
         # Check if user already exists
         print(f"Checking for existing user: {form_data.username}")
-        statement = select(FilmUser).where(FilmUser.username == form_data.username)
+        statement = select(FilmUser).where(
+            FilmUser.username == form_data.username)
         current_user = session.exec(statement).first()
-        
+
         if current_user:
             print(f"User found: {form_data.username}")
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, 
+                status_code=status.HTTP_400_BAD_REQUEST,
                 detail="User already exists. Please login instead."
             )
 
@@ -216,23 +216,23 @@ async def registration(
         print(f"Creating new user: {form_data.username}")
         hashed_password = pwd_context.hash(form_data.password)
         new_user = FilmUser(
-            username=form_data.username, 
-            password=hashed_password, 
-            date_registered=datetime.datetime.now(), 
+            username=form_data.username,
+            password=hashed_password,
+            date_registered=datetime.datetime.now(),
             profiles=[]
         )
-        
+
         session.add(new_user)
         session.commit()
         session.refresh(new_user)
-        
+
         # Create token with user data
         data_token = TokenModel(id=new_user.id, profiles=[])
         data_token = data_token.model_dump()
         the_token = create_jwt_token(data_token)
-        
+
         return the_token
-        
+
     except HTTPException:
         # Re-raise HTTP exceptions
         raise
