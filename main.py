@@ -226,12 +226,7 @@ async def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm
         session.commit()
         session.refresh(new_user)
 
-        # Create token with user data
-        data_token = TokenModel(id=new_user.id, profiles=[])
-        data_token = data_token.model_dump()
-        the_token = create_jwt_token(data_token)
-
-        return the_token
+        return create_jwt_token(TokenModel.model_validate(new_user).model_dump())
 
     except HTTPException:
         # Re-raise HTTP exceptions
@@ -255,20 +250,10 @@ async def login(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depe
     if not pwd_context.verify(form_data.password, current_user.password):
         raise HTTPException(status_code=404, detail="Wrong Password")
 
-    profile_data = []
-    for profile in current_user.profiles:
-        profile_data.append(TokenProfileDataModel(
-            id=profile.id, displayname=profile.displayname))
-
-    data_token = TokenModel(id=current_user.id, profiles=profile_data)
-    data_token = data_token.model_dump()
-    the_token = create_jwt_token(data_token)
-    return the_token
+    return create_jwt_token(TokenModel.model_validate(current_user).model_dump())
 
 
 async def get_current_filmuser(token: str = Depends(oauth2_scheme)) -> int:
-    print(f"[INFO]: GET CURRENT FILMUSER TOKEN: {token}")
-    print(f"Type of token {type(token)}")
     session_data = verify_jwt_token(token)
     return session_data.get("id")
 
@@ -277,21 +262,17 @@ async def get_current_filmuser(token: str = Depends(oauth2_scheme)) -> int:
 async def add_profile(displayname: Annotated[str, Form()], session: SessionDep, current_filmuser: Annotated[int, Depends(get_current_filmuser)]) -> str:
     current_user = session.get(FilmUser, current_filmuser)
     current_user.profiles.append(Profile(displayname=displayname))
+
     session.add(current_user)
     session.commit()
+    session.refresh(current_user)
 
-    # check to see if we can just use the session user already
-    current_user = session.get(FilmUser, current_filmuser)
-    profile_data = []
-    for profile in current_user.profiles:
-        profile_data.append(TokenProfileDataModel(
-            id=profile.id, displayname=profile.displayname))
+    return create_jwt_token(TokenModel.model_validate(current_user).model_dump())
 
-    data_token = TokenModel(id=current_user.id, profiles=profile_data)
-    data_token = data_token.model_dump()
-    the_token = create_jwt_token(data_token)
 
-    return the_token
+@app.post("/editprofile")
+def edit_profile(displayname: Annotated[str, Form()], newDisplayName: Annotated[str, Form()], session: SessionDep, current_filmuser: Annotated[int, Depends(get_current_filmuser)]) -> str:
+    print("Got edit profile")
 
 
 @app.post("/removeprofile")
