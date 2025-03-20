@@ -199,8 +199,6 @@ async def health_check():
 @app.post("/registration")
 async def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
     try:
-        # Check if user already exists
-        print(f"Checking for existing user: {form_data.username}")
         statement = select(FilmUser).where(
             FilmUser.username == form_data.username)
         current_user = session.exec(statement).first()
@@ -244,6 +242,7 @@ async def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm
 async def login(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
     statement = select(FilmUser).where(FilmUser.username == form_data.username)
     current_user = session.exec(statement).first()
+
     if current_user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -271,8 +270,19 @@ async def add_profile(displayname: Annotated[str, Form()], session: SessionDep, 
 
 
 @app.post("/editprofile")
-def edit_profile(displayname: Annotated[str, Form()], newDisplayName: Annotated[str, Form()], session: SessionDep, current_filmuser: Annotated[int, Depends(get_current_filmuser)]) -> str:
-    print("Got edit profile")
+def edit_profile(displayname: Annotated[str, Form()], newdisplayname: Annotated[str, Form()], session: SessionDep, current_filmuser: Annotated[int, Depends(get_current_filmuser)]) -> str:
+    current_user = session.get(FilmUser, current_filmuser)
+
+    # change the display name
+    for profile in current_user.profiles:
+        if profile.displayname == displayname:
+            profile.displayname = newdisplayname
+
+    session.add(current_user)
+    session.commit()
+    session.refresh(current_user)
+
+    return create_jwt_token(TokenModel.model_validate(current_user).model_dump())
 
 
 @app.post("/removeprofile")
