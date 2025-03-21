@@ -9,8 +9,14 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Install gunicorn explicitly
 RUN pip install --no-cache-dir gunicorn
 
+# Make folder for images
+RUN mkdir -p /app/static/images
+
 # Copy the application code
 COPY . .
+
+# Ensure correct permissions for images folder
+RUN chmod -R 755 /app/static
 
 # Envrionment variables
 ENV DB_NAME=filmpoc

@@ -4,6 +4,7 @@ import secrets
 from contextlib import asynccontextmanager
 from typing import Annotated, List
 from fastapi import Depends, FastAPI, Response, Form, HTTPException, status
+from fastapi.responses import FileResponse
 from sqlmodel import Session, SQLModel, create_engine, select
 from sqlalchemy import inspect, MetaData, Table
 from sqlalchemy.orm import selectinload
@@ -12,6 +13,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import jwt, JWTError
 from passlib.context import CryptContext
 from dotenv import load_dotenv
+from pathlib import Path
 from film_models import *
 from user_models import *
 from example_data import *
@@ -20,7 +22,7 @@ from token_models import *
 # Localhost environment variables for local deployment
 # Dockerfile has production environment variables
 db_name = os.getenv("DB_NAME", "filmpoc")
-db_user = os.getenv("DB_USER", "watcher") 
+db_user = os.getenv("DB_USER", "watcher")
 db_password = os.getenv("DB_PASSWORD", "films")
 instance_connection_name = os.getenv("INSTANCE_CONNECTION_NAME", "")
 setup_db = os.getenv("SETUPDB", "Dynamic")
@@ -36,12 +38,14 @@ else:
 engine = create_engine(url_postgresql, echo=True)
 
 # openssl rand -hex 32 to generate key(more on this later)
-SECRET_KEY = os.getenv("SECRET_KEY", "80ebfb709b4ffc7acb52167b42388165d688a1035a01dd5dcf54990ea0faabe8")
+SECRET_KEY = os.getenv(
+    "SECRET_KEY", "80ebfb709b4ffc7acb52167b42388165d688a1035a01dd5dcf54990ea0faabe8")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "10"))
+ACCESS_TOKEN_EXPIRE_MINUTES = int(
+    os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "10"))
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
+IMAGES_DIR = Path("static/images")
 
 def get_session():
     with Session(engine) as session:
@@ -70,7 +74,7 @@ def create_example_data(session: SessionDep):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Get setup mode from environment variable (Dynamic is default)
-    print(f"Database setup mode: {setup_db}")    
+    print(f"Database setup mode: {setup_db}")
     if setup_db == "Example":
         drop_all_tables()
         create_db_and_tables()
@@ -84,6 +88,11 @@ async def lifespan(app: FastAPI):
     elif setup_db == "Production":
         create_db_and_tables()
         print(f"{setup_db} db configured")
+
+    # Ensure images folder exists
+    IMAGES_DIR.mkdir(parents=True, exist_ok=True)
+    print(f"Images directory: {IMAGES_DIR.absolute()}")
+    
     yield
 
 
@@ -91,8 +100,8 @@ app = FastAPI(lifespan=lifespan)
 
 
 origins = [
-     "https://minflixhd.web.app",
-     "http://localhost:3000",
+    "https://minflixhd.web.app",
+    "http://localhost:3000",
 ]
 
 app.add_middleware(
@@ -138,9 +147,9 @@ async def root():
         "version": "1.0",
         "environment": "production" if instance_connection_name else "local",
         "endpoints": [
-            "/login", 
-            "/registration", 
-            "/addprofile", 
+            "/login",
+            "/registration",
+            "/addprofile",
             "/health",
             "/schema"
         ]
@@ -152,15 +161,15 @@ async def inspect_schema():
     try:
         inspector = inspect(engine)
         tables = inspector.get_table_names()
-        
+
         schema_info = {}
         for table_name in tables:
             columns = inspector.get_columns(table_name)
             schema_info[table_name] = [
-                {"name": col["name"], "type": str(col["type"])} 
+                {"name": col["name"], "type": str(col["type"])}
                 for col in columns
             ]
-        
+
         return {
             "tables": tables,
             "schema": schema_info
@@ -179,7 +188,7 @@ async def health_check():
         with engine.connect() as conn:
             result = conn.execute(select(1)).fetchone()
             connected = result is not None
-        
+
         return {
             "status": "healthy" if connected else "unhealthy",
             "database": "connected" if connected else "disconnected",
@@ -195,20 +204,16 @@ async def health_check():
 
 
 @app.post("/registration")
-async def registration(
-    session: SessionDep, 
-    form_data: OAuth2PasswordRequestForm = Depends()
-) -> str:
+async def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
     try:
-        # Check if user already exists
-        print(f"Checking for existing user: {form_data.username}")
-        statement = select(FilmUser).where(FilmUser.username == form_data.username)
+        statement = select(FilmUser).where(
+            FilmUser.username == form_data.username)
         current_user = session.exec(statement).first()
-        
+
         if current_user:
             print(f"User found: {form_data.username}")
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, 
+                status_code=status.HTTP_400_BAD_REQUEST,
                 detail="User already exists. Please login instead."
             )
 
@@ -216,23 +221,18 @@ async def registration(
         print(f"Creating new user: {form_data.username}")
         hashed_password = pwd_context.hash(form_data.password)
         new_user = FilmUser(
-            username=form_data.username, 
-            password=hashed_password, 
-            date_registered=datetime.datetime.now(), 
+            username=form_data.username,
+            password=hashed_password,
+            date_registered=datetime.datetime.now(),
             profiles=[]
         )
-        
+
         session.add(new_user)
         session.commit()
         session.refresh(new_user)
-        
-        # Create token with user data
-        data_token = TokenModel(id=new_user.id, profiles=[])
-        data_token = data_token.model_dump()
-        the_token = create_jwt_token(data_token)
-        
-        return the_token
-        
+
+        return create_jwt_token(TokenModel.model_validate(new_user).model_dump())
+
     except HTTPException:
         # Re-raise HTTP exceptions
         raise
@@ -249,26 +249,17 @@ async def registration(
 async def login(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
     statement = select(FilmUser).where(FilmUser.username == form_data.username)
     current_user = session.exec(statement).first()
+
     if current_user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
     if not pwd_context.verify(form_data.password, current_user.password):
         raise HTTPException(status_code=404, detail="Wrong Password")
 
-    profile_data = []
-    for profile in current_user.profiles:
-        profile_data.append(TokenProfileDataModel(
-            id=profile.id, displayname=profile.displayname))
-
-    data_token = TokenModel(id=current_user.id, profiles=profile_data)
-    data_token = data_token.model_dump()
-    the_token = create_jwt_token(data_token)
-    return the_token
+    return create_jwt_token(TokenModel.model_validate(current_user).model_dump())
 
 
 async def get_current_filmuser(token: str = Depends(oauth2_scheme)) -> int:
-    print(f"[INFO]: GET CURRENT FILMUSER TOKEN: {token}")
-    print(f"Type of token {type(token)}")
     session_data = verify_jwt_token(token)
     return session_data.get("id")
 
@@ -277,23 +268,54 @@ async def get_current_filmuser(token: str = Depends(oauth2_scheme)) -> int:
 async def add_profile(displayname: Annotated[str, Form()], session: SessionDep, current_filmuser: Annotated[int, Depends(get_current_filmuser)]) -> str:
     current_user = session.get(FilmUser, current_filmuser)
     current_user.profiles.append(Profile(displayname=displayname))
+
     session.add(current_user)
     session.commit()
+    session.refresh(current_user)
 
-    # check to see if we can just use the session user already
+    return create_jwt_token(TokenModel.model_validate(current_user).model_dump())
+
+
+@app.post("/editprofile")
+async def edit_profile(displayname: Annotated[str, Form()], newdisplayname: Annotated[str, Form()], session: SessionDep, current_filmuser: Annotated[int, Depends(get_current_filmuser)]) -> str:
     current_user = session.get(FilmUser, current_filmuser)
-    profile_data = []
+
+    # change the display name
     for profile in current_user.profiles:
-        profile_data.append(TokenProfileDataModel(
-            id=profile.id, displayname=profile.displayname))
+        if profile.displayname == displayname:
+            profile.displayname = newdisplayname
 
-    data_token = TokenModel(id=current_user.id, profiles=profile_data)
-    data_token = data_token.model_dump()
-    the_token = create_jwt_token(data_token)
+    session.add(current_user)
+    session.commit()
+    session.refresh(current_user)
 
-    return the_token
+    return create_jwt_token(TokenModel.model_validate(current_user).model_dump())
 
 
 @app.post("/removeprofile")
 def remove_profile():
     print("Got remove")
+
+
+@app.get("/images/{image_name}")
+async def get_image(image_name: str):
+    # Sanitize the filename to prevent path traversal
+    try:
+        image_path = (IMAGES_DIR / f"{image_name}.jpg").resolve()
+        print(f"[INFO]: image path gotten {image_path}")
+        if not image_path.exists():
+            print(f"[INFO]: image not found")
+            raise HTTPException(status_code=404, detail="Image not found")
+            
+        # Set cache headers (1 hour = 3600 seconds)
+        headers = {"Cache-Control": "public, max-age=3600"}
+        
+        return FileResponse(
+            path=str(image_path),
+            headers=headers,
+            media_type=f"image/{image_path.suffix.lstrip('.')}"  # Determine media type from extension
+        )
+    except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=400, detail="Invalid image request")
