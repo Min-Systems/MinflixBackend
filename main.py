@@ -88,6 +88,11 @@ async def lifespan(app: FastAPI):
     elif setup_db == "Production":
         create_db_and_tables()
         print(f"{setup_db} db configured")
+
+    # Ensure images folder exists
+    IMAGES_DIR.mkdir(parents=True, exist_ok=True)
+    print(f"Images directory: {IMAGES_DIR.absolute()}")
+    
     yield
 
 
