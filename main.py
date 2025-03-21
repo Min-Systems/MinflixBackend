@@ -4,6 +4,7 @@ import secrets
 from contextlib import asynccontextmanager
 from typing import Annotated, List
 from fastapi import Depends, FastAPI, Response, Form, HTTPException, status
+from fastapi.responses import FileResponse
 from sqlmodel import Session, SQLModel, create_engine, select
 from sqlalchemy import inspect, MetaData, Table
 from sqlalchemy.orm import selectinload
@@ -12,6 +13,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import jwt, JWTError
 from passlib.context import CryptContext
 from dotenv import load_dotenv
+from pathlib import Path
 from film_models import *
 from user_models import *
 from example_data import *
@@ -43,7 +45,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(
     os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "10"))
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
+IMAGES_DIR = Path("static/images")
 
 def get_session():
     with Session(engine) as session:
@@ -270,7 +272,7 @@ async def add_profile(displayname: Annotated[str, Form()], session: SessionDep, 
 
 
 @app.post("/editprofile")
-def edit_profile(displayname: Annotated[str, Form()], newdisplayname: Annotated[str, Form()], session: SessionDep, current_filmuser: Annotated[int, Depends(get_current_filmuser)]) -> str:
+async def edit_profile(displayname: Annotated[str, Form()], newdisplayname: Annotated[str, Form()], session: SessionDep, current_filmuser: Annotated[int, Depends(get_current_filmuser)]) -> str:
     current_user = session.get(FilmUser, current_filmuser)
 
     # change the display name
@@ -288,3 +290,27 @@ def edit_profile(displayname: Annotated[str, Form()], newdisplayname: Annotated[
 @app.post("/removeprofile")
 def remove_profile():
     print("Got remove")
+
+
+@app.get("/images/{image_name}")
+async def get_image(image_name: str):
+    # Sanitize the filename to prevent path traversal
+    try:
+        image_path = (IMAGES_DIR / f"{image_name}.jpg").resolve()
+        print(f"[INFO]: image path gotten {image_path}")
+        if not image_path.exists():
+            print(f"[INFO]: image not found")
+            raise HTTPException(status_code=404, detail="Image not found")
+            
+        # Set cache headers (1 hour = 3600 seconds)
+        headers = {"Cache-Control": "public, max-age=3600"}
+        
+        return FileResponse(
+            path=str(image_path),
+            headers=headers,
+            media_type=f"image/{image_path.suffix.lstrip('.')}"  # Determine media type from extension
+        )
+    except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=400, detail="Invalid image request")
