@@ -21,6 +21,7 @@ from token_models import *
 db_name = os.getenv("DB_NAME", "filmpoc")
 db_user = os.getenv("DB_USER", "watcher")
 db_password = os.getenv("DB_PASSWORD", "films")
+db_host = os.getenv("DB_HOST", "")
 instance_connection_name = os.getenv("INSTANCE_CONNECTION_NAME", "")
 setup_db = os.getenv("SETUPDB", "Dynamic")
 
@@ -28,6 +29,9 @@ setup_db = os.getenv("SETUPDB", "Dynamic")
 if instance_connection_name:
     # Google Cloud
     url_postgresql = f"postgresql+psycopg2://{db_user}:{db_password}@/{db_name}?host=/cloudsql/{instance_connection_name}"
+elif db_host:
+    # Render.com
+    url_postgresql = f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}"
 else:
     # Local
     url_postgresql = f"postgresql://{db_user}:{db_password}@localhost/{db_name}"
@@ -98,6 +102,7 @@ app = FastAPI(lifespan=lifespan)
 
 origins = [
     "https://minflixhd.web.app",
+    "https://minflix-kzt6.onrender.com",
     "http://localhost:3000",
 ]
 
@@ -142,7 +147,7 @@ async def root():
     return {
         "message": "MinFlix API is running",
         "version": "1.0",
-        "environment": "production" if instance_connection_name else "local",
+        "environment": "production" if instance_connection_name or db_host else "local",
         "endpoints": [
             "/login",
             "/registration",
