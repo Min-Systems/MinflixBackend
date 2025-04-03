@@ -1,18 +1,15 @@
 import os
 import datetime
-import secrets
 from contextlib import asynccontextmanager
-from typing import Annotated, List
-from fastapi import Depends, FastAPI, Response, Form, HTTPException, status
+from typing import Annotated
+from fastapi import Depends, FastAPI, Form, HTTPException, status
 from fastapi.responses import FileResponse
 from sqlmodel import Session, SQLModel, create_engine, select
-from sqlalchemy import inspect, MetaData, Table
-from sqlalchemy.orm import selectinload
+from sqlalchemy import inspect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import jwt, JWTError
 from passlib.context import CryptContext
-from dotenv import load_dotenv
 from pathlib import Path
 from film_models import *
 from user_models import *
@@ -295,6 +292,18 @@ async def edit_profile(displayname: Annotated[str, Form()], newdisplayname: Anno
 @app.post("/removeprofile")
 def remove_profile():
     print("Got remove")
+
+
+@app.post("/watchlater/{profile_id}/{film_id}")
+async def add_watch_later(profile_id: int, film_id: int, session: SessionDep, current_filmuser: Annotated[int, Depends(get_current_filmuser)]):
+    current_user = session.get(FilmUser, current_filmuser)
+    print(f"Got profile_id: {profile_id}")
+    print(f"Got film_id: {film_id}")
+    # add the new watch_later
+    # get the profile inside the session
+    for profile in current_user:
+        if profile.id == profile_id:
+            pass
 
 
 @app.get("/images/{image_name}")
