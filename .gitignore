@@ -1,3 +1,4 @@
 .backend_env/
 __pycache__/
 junk_code.py
+static/images/
