@@ -24,6 +24,7 @@ db_password = os.getenv("DB_PASSWORD", "films")
 db_host = os.getenv("DB_HOST", "")
 instance_connection_name = os.getenv("INSTANCE_CONNECTION_NAME", "")
 setup_db = os.getenv("SETUPDB", "Dynamic")
+db_url = os.getenv("DB_URL", "")
 
 # Log the connection envs
 print("[INFO]: LOGGING CONNECTION ENV VALUES")
@@ -39,9 +40,10 @@ if instance_connection_name:
     # Google Cloud
     url_postgresql = f"postgresql+psycopg2://{db_user}:{db_password}@/{db_name}?host=/cloudsql/{instance_connection_name}"
     print(f"[INFO]: using google cloud with url: {url_postgresql}")
-elif db_host:
+elif db_host or db_url:
     # Render.com
     url_postgresql = f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}"
+    url_postgresql = db_url
     print(f"[INFO]: using render with url: {url_postgresql}")
 else:
     # Local
