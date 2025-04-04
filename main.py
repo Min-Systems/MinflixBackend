@@ -126,6 +126,7 @@ origins = [
     "https://minflix-kzt6.onrender.com",
     "https://minflixfrontend.onrender.com",
     "https://minflixfrontend.onrender.com/",
+    "https://minflixclient-production.up.railway.app/",
     "https://minflixfrontend-production.up.railway.app",
     "http://localhost:3000",
 ]
