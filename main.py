@@ -124,6 +124,7 @@ app = FastAPI(lifespan=lifespan)
 origins = [
     "https://minflixhd.web.app",
     "https://minflix-kzt6.onrender.com",
+    "https://minflixfrontend.onrender.com"
     "http://localhost:3000",
 ]
 
