@@ -1,6 +1,5 @@
 import os
 import datetime
-import logging
 from contextlib import asynccontextmanager
 from typing import Annotated
 from fastapi import Depends, FastAPI, Form, HTTPException, status
@@ -17,9 +16,6 @@ from user_models import *
 from example_data import *
 from token_models import *
 
-logger = logging.getLogger(__name__)
-logging.basicConfig(filename='minflixbackend.log', level=logging.INFO)
-
 # Localhost environment variables for local deployment
 # Dockerfile has production environment variables
 db_name = os.getenv("DB_NAME", "filmpoc")
@@ -30,27 +26,27 @@ instance_connection_name = os.getenv("INSTANCE_CONNECTION_NAME", "")
 setup_db = os.getenv("SETUPDB", "Dynamic")
 
 # Log the connection envs
-logger.info("[INFO]: LOGGING CONNECTION ENV VALUES")
-logger.info(f"db_name = {db_name}")
-logger.info(f"db_user = {db_user}")
-logger.info(f"db_password = {db_password}")
-logger.info(f"db_host = {db_host}")
-logger.info(f"instance_connection_name = {instance_connection_name}")
-logger.info(f"setup_db = {setup_db}")
+print("[INFO]: LOGGING CONNECTION ENV VALUES")
+print(f"db_name = {db_name}")
+print(f"db_user = {db_user}")
+print(f"db_password = {db_password}")
+print(f"db_host = {db_host}")
+print(f"instance_connection_name = {instance_connection_name}")
+print(f"setup_db = {setup_db}")
 
 # Loads production database or local database
 if instance_connection_name:
     # Google Cloud
     url_postgresql = f"postgresql+psycopg2://{db_user}:{db_password}@/{db_name}?host=/cloudsql/{instance_connection_name}"
-    logger.info(f"[INFO]: using google cloud with url: {url_postgresql}")
+    print(f"[INFO]: using google cloud with url: {url_postgresql}")
 elif db_host:
     # Render.com
     url_postgresql = f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}"
-    logger.info(f"[INFO]: using render with url: {url_postgresql}")
+    print(f"[INFO]: using render with url: {url_postgresql}")
 else:
     # Local
     url_postgresql = f"postgresql://{db_user}:{db_password}@localhost/{db_name}"
-    logger.info(f"[INFO]: using local with url: {url_postgresql}")
+    print(f"[INFO]: using local with url: {url_postgresql}")
 
 engine = create_engine(url_postgresql, echo=True)
 
@@ -65,10 +61,10 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 IMAGES_DIR = Path("static/images")
 
 # Log the crypt envs
-logger.info("[INFO]: LOGGING CRYPT ENVS")
-logger.info(f"SECRET_KEY = {SECRET_KEY}")
-logger.info(f"ALGORITHM = {ALGORITHM}")
-logger.info(f"ACCESS_TOKEN_EXPIRE_MINUTES = {ACCESS_TOKEN_EXPIRE_MINUTES}")
+print("[INFO]: LOGGING CRYPT ENVS")
+print(f"SECRET_KEY = {SECRET_KEY}")
+print(f"ALGORITHM = {ALGORITHM}")
+print(f"ACCESS_TOKEN_EXPIRE_MINUTES = {ACCESS_TOKEN_EXPIRE_MINUTES}")
 
 
 def get_session():
