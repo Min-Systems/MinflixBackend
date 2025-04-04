@@ -1,3 +1,5 @@
 .backend_env/
 __pycache__/
+static/films
+static/images
 static/filmsbig/
