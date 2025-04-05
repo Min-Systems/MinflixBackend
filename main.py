@@ -342,7 +342,7 @@ async def stream_film(range: str = Header(None)):
     start = int(start)
     end = int(end) if end else start + CHUNK_SIZE
     current_film = static_media_directory + "EvilBrainFromOuterSpace_512kb.mp4"
-    current_film = "/static/EvilBrainFromOuterSpace_512kb.mp4"
+    current_film = Path(current_film)
     with open(current_film, "rb") as video:
         video.seek(start)
         data = video.read(end - start)
