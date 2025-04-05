@@ -99,8 +99,8 @@ async def lifespan(app: FastAPI):
         print(f"{setup_db} db configured")
 
     # Ensure images folder exists
-    IMAGES_DIR.mkdir(parents=True, exist_ok=True)
-    print(f"Images directory: {IMAGES_DIR.absolute()}")
+    # IMAGES_DIR.mkdir(parents=True, exist_ok=True)
+    # print(f"Images directory: {IMAGES_DIR.absolute()}")
 
     yield
 
