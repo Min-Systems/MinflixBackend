@@ -54,16 +54,21 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(
     os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "10"))
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-#IMAGES_DIR = Path("static/images")
+# IMAGES_DIR = Path("static/images")
 CHUNK_SIZE = 1024*1024
 
 
 # Configure logging
 logging.basicConfig(
-     filename='app.log',  # Log file name
-     level=logging.INFO,  # Log level
-     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'  # Log format
- )
+    filename='app.log',  # Log file name
+    level=logging.INFO,  # Log level
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'  # Log format
+)
+
+
+# Get the logger for SQLModel and set its level to WARNING
+sqlmodel_logger = logging.getLogger('sqlmodel')
+sqlmodel_logger.setLevel(logging.WARNING)
 
 
 def get_session():
@@ -353,7 +358,7 @@ async def stream_film(range: str = Header(None)):
     start = int(start)
     end = int(end) if end else start + CHUNK_SIZE
 
-    current_film = static_media_directory + "EvilBrainFromOuterSpace_512kb.mp4"
+    current_film = static_media_directory + "/EvilBrainFromOuterSpace_512kb.mp4"
     print(f"[INFO]: got film directory: {current_film}")
     logging.info(f"[INFO]: got the file as: {current_film}")
     current_film = Path(current_film)
