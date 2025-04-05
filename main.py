@@ -25,15 +25,8 @@ db_host = os.getenv("DB_HOST", "")
 instance_connection_name = os.getenv("INSTANCE_CONNECTION_NAME", "")
 setup_db = os.getenv("SETUPDB", "Dynamic")
 db_url = os.getenv("DB_URL", "")
+static_media_directory = os.getenv("MEDIA_DIRECTORY", "")
 
-# Log the connection envs
-print("[INFO]: LOGGING CONNECTION ENV VALUES")
-print(f"db_name = {db_name}")
-print(f"db_user = {db_user}")
-print(f"db_password = {db_password}")
-print(f"db_host = {db_host}")
-print(f"instance_connection_name = {instance_connection_name}")
-print(f"setup_db = {setup_db}")
 
 # Loads production database or local database
 if instance_connection_name:
@@ -60,13 +53,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(
     os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "10"))
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-IMAGES_DIR = Path("static/images")
-
-# Log the crypt envs
-print("[INFO]: LOGGING CRYPT ENVS")
-print(f"SECRET_KEY = {SECRET_KEY}")
-print(f"ALGORITHM = {ALGORITHM}")
-print(f"ACCESS_TOKEN_EXPIRE_MINUTES = {ACCESS_TOKEN_EXPIRE_MINUTES}")
+#IMAGES_DIR = Path("static/images")
 
 
 def get_session():
@@ -335,6 +322,20 @@ async def add_watch_later(profile_id: int, film_id: int, session: SessionDep, cu
             pass
 
 
+@app.get("/getfilms")
+async def get_film_list() -> str:
+    result = ""
+    the_path = Path(static_media_directory)
+    # Get all files in the directory
+    files = [str(file) for file in the_path.iterdir() if file.is_file()]
+    # Create a string with all file names
+    result = ', '.join(files)
+    print(f"[INFO]: the files found: {result}")
+
+    return result
+
+
+'''
 @app.get("/images/{image_name}")
 async def get_image(image_name: str):
     # Sanitize the filename to prevent path traversal
@@ -358,3 +359,4 @@ async def get_image(image_name: str):
         if isinstance(e, HTTPException):
             raise e
         raise HTTPException(status_code=400, detail="Invalid image request")
+'''
