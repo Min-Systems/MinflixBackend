@@ -2,7 +2,7 @@ import os
 import datetime
 from contextlib import asynccontextmanager
 from typing import Annotated
-from fastapi import Depends, FastAPI, Form, HTTPException, status
+from fastapi import Header, Response, Depends, FastAPI, Form, HTTPException, status
 from fastapi.responses import FileResponse
 from sqlmodel import Session, SQLModel, create_engine, select
 from sqlalchemy import inspect
@@ -54,6 +54,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 #IMAGES_DIR = Path("static/images")
+CHUNK_SIZE = 1024*1024
 
 
 def get_session():
@@ -112,7 +113,7 @@ origins = [
     "https://minflixhd.web.app",
     "https://minflix-kzt6.onrender.com",
     "https://minflixfrontend.onrender.com/",
-    "https://11b2d3ce.minflixclient.pages.dev",
+    "https://7d99f2d2.minflixclient.pages.dev",
     "https://minflixclient-production.up.railway.app",
     "http://localhost:3000",
 ]
@@ -333,6 +334,24 @@ async def get_film_list() -> str:
     print(f"[INFO]: the files found: {result}")
 
     return result
+
+
+@app.get("/film")
+async def stream_film(range: str = Header(None)):
+    start, end = range.replace("bytes=", "").split("-")
+    start = int(start)
+    end = int(end) if end else start + CHUNK_SIZE
+    current_film = static_media_directory + "EvilBrainFromOuterSpace_512kb.mp4"
+    with open(current_film, "rb") as video:
+        video.seek(start)
+        data = video.read(end - start)
+        filesize = str(current_film.stat().st_size)
+        headers = {
+            'Content-Range': f'bytes {str(start)}-{str(end)}/{filesize}',
+            'Accept-Ranges': 'bytes'
+        }
+
+        return Response(data, status_code=206, headers=headers, media_type="video/mp4")
 
 
 '''
