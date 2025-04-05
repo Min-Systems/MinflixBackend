@@ -1,0 +1,1358 @@
+2025-04-04 20:41:45,145 - uvicorn.error - INFO - Started server process [11703]
+2025-04-04 20:41:45,147 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-04 20:41:45,157 - sqlalchemy.engine.Engine - INFO - select pg_catalog.version()
+2025-04-04 20:41:45,158 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-04-04 20:41:45,158 - sqlalchemy.engine.Engine - INFO - select current_schema()
+2025-04-04 20:41:45,159 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-04-04 20:41:45,159 - sqlalchemy.engine.Engine - INFO - show standard_conforming_strings
+2025-04-04 20:41:45,159 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-04-04 20:41:45,160 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-04-04 20:41:45,161 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:41:45,162 - sqlalchemy.engine.Engine - INFO - [generated in 0.00015s] {'table_name': 'film', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:41:45,162 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:41:45,163 - sqlalchemy.engine.Engine - INFO - [cached since 0.001173s ago] {'table_name': 'filmcast', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:41:45,163 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:41:45,163 - sqlalchemy.engine.Engine - INFO - [cached since 0.001709s ago] {'table_name': 'filmproductionteam', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:41:45,164 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:41:45,164 - sqlalchemy.engine.Engine - INFO - [cached since 0.002194s ago] {'table_name': 'filmuser', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:41:45,164 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:41:45,164 - sqlalchemy.engine.Engine - INFO - [cached since 0.00272s ago] {'table_name': 'profile', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:41:45,165 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:41:45,165 - sqlalchemy.engine.Engine - INFO - [cached since 0.003358s ago] {'table_name': 'searchhistory', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:41:45,165 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:41:45,165 - sqlalchemy.engine.Engine - INFO - [cached since 0.003885s ago] {'table_name': 'favorite', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:41:45,166 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:41:45,166 - sqlalchemy.engine.Engine - INFO - [cached since 0.004403s ago] {'table_name': 'watchlater', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:41:45,166 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:41:45,166 - sqlalchemy.engine.Engine - INFO - [cached since 0.00493s ago] {'table_name': 'watchhistory', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:41:45,167 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE watchhistory
+2025-04-04 20:41:45,167 - sqlalchemy.engine.Engine - INFO - [no key 0.00013s] {}
+2025-04-04 20:41:45,168 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE watchlater
+2025-04-04 20:41:45,168 - sqlalchemy.engine.Engine - INFO - [no key 0.00014s] {}
+2025-04-04 20:41:45,169 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE favorite
+2025-04-04 20:41:45,169 - sqlalchemy.engine.Engine - INFO - [no key 0.00011s] {}
+2025-04-04 20:41:45,170 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE searchhistory
+2025-04-04 20:41:45,170 - sqlalchemy.engine.Engine - INFO - [no key 0.00012s] {}
+2025-04-04 20:41:45,170 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE profile
+2025-04-04 20:41:45,171 - sqlalchemy.engine.Engine - INFO - [no key 0.00012s] {}
+2025-04-04 20:41:45,171 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE filmproductionteam
+2025-04-04 20:41:45,171 - sqlalchemy.engine.Engine - INFO - [no key 0.00010s] {}
+2025-04-04 20:41:45,172 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE filmcast
+2025-04-04 20:41:45,172 - sqlalchemy.engine.Engine - INFO - [no key 0.00011s] {}
+2025-04-04 20:41:45,172 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE filmuser
+2025-04-04 20:41:45,172 - sqlalchemy.engine.Engine - INFO - [no key 0.00010s] {}
+2025-04-04 20:41:45,173 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE film
+2025-04-04 20:41:45,173 - sqlalchemy.engine.Engine - INFO - [no key 0.00010s] {}
+2025-04-04 20:41:45,174 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-04-04 20:41:45,179 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-04-04 20:41:45,179 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:41:45,179 - sqlalchemy.engine.Engine - INFO - [cached since 0.01799s ago] {'table_name': 'film', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:41:45,180 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:41:45,180 - sqlalchemy.engine.Engine - INFO - [cached since 0.01896s ago] {'table_name': 'filmcast', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:41:45,181 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:41:45,181 - sqlalchemy.engine.Engine - INFO - [cached since 0.01953s ago] {'table_name': 'filmproductionteam', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:41:45,181 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:41:45,182 - sqlalchemy.engine.Engine - INFO - [cached since 0.02011s ago] {'table_name': 'filmuser', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:41:45,182 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:41:45,182 - sqlalchemy.engine.Engine - INFO - [cached since 0.02061s ago] {'table_name': 'profile', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:41:45,182 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:41:45,183 - sqlalchemy.engine.Engine - INFO - [cached since 0.02116s ago] {'table_name': 'searchhistory', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:41:45,183 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:41:45,183 - sqlalchemy.engine.Engine - INFO - [cached since 0.02162s ago] {'table_name': 'favorite', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:41:45,183 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:41:45,184 - sqlalchemy.engine.Engine - INFO - [cached since 0.02213s ago] {'table_name': 'watchlater', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:41:45,184 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:41:45,184 - sqlalchemy.engine.Engine - INFO - [cached since 0.02265s ago] {'table_name': 'watchhistory', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:41:45,185 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE film (
+	id SERIAL NOT NULL, 
+	title VARCHAR NOT NULL, 
+	length INTEGER NOT NULL, 
+	technical_location VARCHAR NOT NULL, 
+	producer VARCHAR NOT NULL, 
+	name VARCHAR, 
+	PRIMARY KEY (id)
+)
+
+
+2025-04-04 20:41:45,185 - sqlalchemy.engine.Engine - INFO - [no key 0.00015s] {}
+2025-04-04 20:41:45,192 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE filmuser (
+	id SERIAL NOT NULL, 
+	email VARCHAR NOT NULL, 
+	password VARCHAR NOT NULL, 
+	date_registered TIMESTAMP WITHOUT TIME ZONE NOT NULL, 
+	PRIMARY KEY (id)
+)
+
+
+2025-04-04 20:41:45,192 - sqlalchemy.engine.Engine - INFO - [no key 0.00018s] {}
+2025-04-04 20:41:45,197 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE filmcast (
+	id SERIAL NOT NULL, 
+	name VARCHAR NOT NULL, 
+	role VARCHAR NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:41:45,197 - sqlalchemy.engine.Engine - INFO - [no key 0.00017s] {}
+2025-04-04 20:41:45,201 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE filmproductionteam (
+	id SERIAL NOT NULL, 
+	name VARCHAR NOT NULL, 
+	role VARCHAR NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:41:45,202 - sqlalchemy.engine.Engine - INFO - [no key 0.00019s] {}
+2025-04-04 20:41:45,206 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE profile (
+	id SERIAL NOT NULL, 
+	filmuserid INTEGER NOT NULL, 
+	displayname VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(filmuserid) REFERENCES filmuser (id)
+)
+
+
+2025-04-04 20:41:45,206 - sqlalchemy.engine.Engine - INFO - [no key 0.00016s] {}
+2025-04-04 20:41:45,212 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE searchhistory (
+	id SERIAL NOT NULL, 
+	profileid INTEGER NOT NULL, 
+	search_query VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(profileid) REFERENCES profile (id)
+)
+
+
+2025-04-04 20:41:45,213 - sqlalchemy.engine.Engine - INFO - [no key 0.00025s] {}
+2025-04-04 20:41:45,231 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE favorite (
+	id SERIAL NOT NULL, 
+	profileid INTEGER NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	favorited_date VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(profileid) REFERENCES profile (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:41:45,231 - sqlalchemy.engine.Engine - INFO - [no key 0.00024s] {}
+2025-04-04 20:41:45,239 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE watchlater (
+	id SERIAL NOT NULL, 
+	profileid INTEGER NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	dateadded VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(profileid) REFERENCES profile (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:41:45,239 - sqlalchemy.engine.Engine - INFO - [no key 0.00025s] {}
+2025-04-04 20:41:45,286 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE watchhistory (
+	id SERIAL NOT NULL, 
+	profileid INTEGER NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	timestamp INTEGER, 
+	completion INTEGER, 
+	datewatched VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(profileid) REFERENCES profile (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:41:45,287 - sqlalchemy.engine.Engine - INFO - [no key 0.00027s] {}
+2025-04-04 20:41:45,301 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-04-04 20:41:45,303 - uvicorn.error - INFO - Application startup complete.
+2025-04-04 20:42:18,006 - uvicorn.error - INFO - Shutting down
+2025-04-04 20:42:18,107 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-04 20:42:18,108 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-04 20:42:18,108 - uvicorn.error - INFO - Finished server process [11703]
+2025-04-04 20:42:18,890 - uvicorn.error - INFO - Started server process [11783]
+2025-04-04 20:42:18,892 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-04 20:42:18,903 - sqlalchemy.engine.Engine - INFO - select pg_catalog.version()
+2025-04-04 20:42:18,903 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-04-04 20:42:18,904 - sqlalchemy.engine.Engine - INFO - select current_schema()
+2025-04-04 20:42:18,904 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-04-04 20:42:18,905 - sqlalchemy.engine.Engine - INFO - show standard_conforming_strings
+2025-04-04 20:42:18,905 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-04-04 20:42:18,905 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-04-04 20:42:18,908 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:18,908 - sqlalchemy.engine.Engine - INFO - [generated in 0.00020s] {'table_name': 'film', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:18,909 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:18,910 - sqlalchemy.engine.Engine - INFO - [cached since 0.001535s ago] {'table_name': 'filmcast', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:18,910 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:18,910 - sqlalchemy.engine.Engine - INFO - [cached since 0.002289s ago] {'table_name': 'filmproductionteam', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:18,911 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:18,911 - sqlalchemy.engine.Engine - INFO - [cached since 0.002867s ago] {'table_name': 'filmuser', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:18,911 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:18,911 - sqlalchemy.engine.Engine - INFO - [cached since 0.00337s ago] {'table_name': 'profile', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:18,912 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:18,912 - sqlalchemy.engine.Engine - INFO - [cached since 0.003868s ago] {'table_name': 'searchhistory', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:18,912 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:18,912 - sqlalchemy.engine.Engine - INFO - [cached since 0.004355s ago] {'table_name': 'favorite', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:18,913 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:18,913 - sqlalchemy.engine.Engine - INFO - [cached since 0.004815s ago] {'table_name': 'watchlater', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:18,913 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:18,913 - sqlalchemy.engine.Engine - INFO - [cached since 0.005296s ago] {'table_name': 'watchhistory', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:18,914 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE watchhistory
+2025-04-04 20:42:18,914 - sqlalchemy.engine.Engine - INFO - [no key 0.00012s] {}
+2025-04-04 20:42:18,916 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE watchlater
+2025-04-04 20:42:18,916 - sqlalchemy.engine.Engine - INFO - [no key 0.00014s] {}
+2025-04-04 20:42:18,917 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE favorite
+2025-04-04 20:42:18,917 - sqlalchemy.engine.Engine - INFO - [no key 0.00023s] {}
+2025-04-04 20:42:18,918 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE searchhistory
+2025-04-04 20:42:18,918 - sqlalchemy.engine.Engine - INFO - [no key 0.00011s] {}
+2025-04-04 20:42:18,918 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE profile
+2025-04-04 20:42:18,918 - sqlalchemy.engine.Engine - INFO - [no key 0.00011s] {}
+2025-04-04 20:42:18,919 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE filmproductionteam
+2025-04-04 20:42:18,919 - sqlalchemy.engine.Engine - INFO - [no key 0.00010s] {}
+2025-04-04 20:42:18,919 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE filmcast
+2025-04-04 20:42:18,920 - sqlalchemy.engine.Engine - INFO - [no key 0.00010s] {}
+2025-04-04 20:42:18,920 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE filmuser
+2025-04-04 20:42:18,920 - sqlalchemy.engine.Engine - INFO - [no key 0.00010s] {}
+2025-04-04 20:42:18,921 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE film
+2025-04-04 20:42:18,921 - sqlalchemy.engine.Engine - INFO - [no key 0.00010s] {}
+2025-04-04 20:42:18,921 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-04-04 20:42:18,924 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-04-04 20:42:18,924 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:18,924 - sqlalchemy.engine.Engine - INFO - [cached since 0.01626s ago] {'table_name': 'film', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:18,925 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:18,925 - sqlalchemy.engine.Engine - INFO - [cached since 0.01712s ago] {'table_name': 'filmcast', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:18,926 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:18,926 - sqlalchemy.engine.Engine - INFO - [cached since 0.01768s ago] {'table_name': 'filmproductionteam', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:18,926 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:18,926 - sqlalchemy.engine.Engine - INFO - [cached since 0.0182s ago] {'table_name': 'filmuser', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:18,927 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:18,927 - sqlalchemy.engine.Engine - INFO - [cached since 0.01867s ago] {'table_name': 'profile', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:18,927 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:18,927 - sqlalchemy.engine.Engine - INFO - [cached since 0.01915s ago] {'table_name': 'searchhistory', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:18,928 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:18,928 - sqlalchemy.engine.Engine - INFO - [cached since 0.01961s ago] {'table_name': 'favorite', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:18,928 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:18,929 - sqlalchemy.engine.Engine - INFO - [cached since 0.02052s ago] {'table_name': 'watchlater', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:18,929 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:18,929 - sqlalchemy.engine.Engine - INFO - [cached since 0.02096s ago] {'table_name': 'watchhistory', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:18,930 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE film (
+	id SERIAL NOT NULL, 
+	title VARCHAR NOT NULL, 
+	length INTEGER NOT NULL, 
+	technical_location VARCHAR NOT NULL, 
+	producer VARCHAR NOT NULL, 
+	name VARCHAR, 
+	PRIMARY KEY (id)
+)
+
+
+2025-04-04 20:42:18,930 - sqlalchemy.engine.Engine - INFO - [no key 0.00015s] {}
+2025-04-04 20:42:18,936 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE filmuser (
+	id SERIAL NOT NULL, 
+	email VARCHAR NOT NULL, 
+	password VARCHAR NOT NULL, 
+	date_registered TIMESTAMP WITHOUT TIME ZONE NOT NULL, 
+	PRIMARY KEY (id)
+)
+
+
+2025-04-04 20:42:18,936 - sqlalchemy.engine.Engine - INFO - [no key 0.00020s] {}
+2025-04-04 20:42:18,942 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE filmcast (
+	id SERIAL NOT NULL, 
+	name VARCHAR NOT NULL, 
+	role VARCHAR NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:42:18,942 - sqlalchemy.engine.Engine - INFO - [no key 0.00012s] {}
+2025-04-04 20:42:18,947 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE filmproductionteam (
+	id SERIAL NOT NULL, 
+	name VARCHAR NOT NULL, 
+	role VARCHAR NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:42:18,947 - sqlalchemy.engine.Engine - INFO - [no key 0.00017s] {}
+2025-04-04 20:42:18,953 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE profile (
+	id SERIAL NOT NULL, 
+	filmuserid INTEGER NOT NULL, 
+	displayname VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(filmuserid) REFERENCES filmuser (id)
+)
+
+
+2025-04-04 20:42:18,953 - sqlalchemy.engine.Engine - INFO - [no key 0.00020s] {}
+2025-04-04 20:42:18,958 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE searchhistory (
+	id SERIAL NOT NULL, 
+	profileid INTEGER NOT NULL, 
+	search_query VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(profileid) REFERENCES profile (id)
+)
+
+
+2025-04-04 20:42:18,958 - sqlalchemy.engine.Engine - INFO - [no key 0.00014s] {}
+2025-04-04 20:42:18,963 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE favorite (
+	id SERIAL NOT NULL, 
+	profileid INTEGER NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	favorited_date VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(profileid) REFERENCES profile (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:42:18,963 - sqlalchemy.engine.Engine - INFO - [no key 0.00017s] {}
+2025-04-04 20:42:18,968 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE watchlater (
+	id SERIAL NOT NULL, 
+	profileid INTEGER NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	dateadded VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(profileid) REFERENCES profile (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:42:18,968 - sqlalchemy.engine.Engine - INFO - [no key 0.00016s] {}
+2025-04-04 20:42:18,974 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE watchhistory (
+	id SERIAL NOT NULL, 
+	profileid INTEGER NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	timestamp INTEGER, 
+	completion INTEGER, 
+	datewatched VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(profileid) REFERENCES profile (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:42:18,974 - sqlalchemy.engine.Engine - INFO - [no key 0.00013s] {}
+2025-04-04 20:42:18,980 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-04-04 20:42:18,983 - uvicorn.error - INFO - Application startup complete.
+2025-04-04 20:42:20,286 - uvicorn.error - INFO - Shutting down
+2025-04-04 20:42:20,387 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-04 20:42:20,388 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-04 20:42:20,388 - uvicorn.error - INFO - Finished server process [11783]
+2025-04-04 20:42:21,009 - uvicorn.error - INFO - Started server process [11792]
+2025-04-04 20:42:21,012 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-04 20:42:21,020 - sqlalchemy.engine.Engine - INFO - select pg_catalog.version()
+2025-04-04 20:42:21,020 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-04-04 20:42:21,021 - sqlalchemy.engine.Engine - INFO - select current_schema()
+2025-04-04 20:42:21,021 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-04-04 20:42:21,022 - sqlalchemy.engine.Engine - INFO - show standard_conforming_strings
+2025-04-04 20:42:21,022 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-04-04 20:42:21,023 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-04-04 20:42:21,026 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:21,026 - sqlalchemy.engine.Engine - INFO - [generated in 0.00026s] {'table_name': 'film', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:21,027 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:21,027 - sqlalchemy.engine.Engine - INFO - [cached since 0.001606s ago] {'table_name': 'filmcast', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:21,028 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:21,028 - sqlalchemy.engine.Engine - INFO - [cached since 0.002166s ago] {'table_name': 'filmproductionteam', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:21,028 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:21,028 - sqlalchemy.engine.Engine - INFO - [cached since 0.002701s ago] {'table_name': 'filmuser', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:21,029 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:21,029 - sqlalchemy.engine.Engine - INFO - [cached since 0.003169s ago] {'table_name': 'profile', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:21,029 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:21,029 - sqlalchemy.engine.Engine - INFO - [cached since 0.00362s ago] {'table_name': 'searchhistory', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:21,030 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:21,030 - sqlalchemy.engine.Engine - INFO - [cached since 0.004059s ago] {'table_name': 'favorite', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:21,030 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:21,030 - sqlalchemy.engine.Engine - INFO - [cached since 0.004494s ago] {'table_name': 'watchlater', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:21,030 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:21,031 - sqlalchemy.engine.Engine - INFO - [cached since 0.004929s ago] {'table_name': 'watchhistory', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:21,031 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE watchhistory
+2025-04-04 20:42:21,031 - sqlalchemy.engine.Engine - INFO - [no key 0.00013s] {}
+2025-04-04 20:42:21,032 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE watchlater
+2025-04-04 20:42:21,032 - sqlalchemy.engine.Engine - INFO - [no key 0.00011s] {}
+2025-04-04 20:42:21,033 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE favorite
+2025-04-04 20:42:21,033 - sqlalchemy.engine.Engine - INFO - [no key 0.00012s] {}
+2025-04-04 20:42:21,034 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE searchhistory
+2025-04-04 20:42:21,034 - sqlalchemy.engine.Engine - INFO - [no key 0.00013s] {}
+2025-04-04 20:42:21,035 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE profile
+2025-04-04 20:42:21,035 - sqlalchemy.engine.Engine - INFO - [no key 0.00015s] {}
+2025-04-04 20:42:21,036 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE filmproductionteam
+2025-04-04 20:42:21,036 - sqlalchemy.engine.Engine - INFO - [no key 0.00011s] {}
+2025-04-04 20:42:21,037 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE filmcast
+2025-04-04 20:42:21,037 - sqlalchemy.engine.Engine - INFO - [no key 0.00011s] {}
+2025-04-04 20:42:21,038 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE filmuser
+2025-04-04 20:42:21,038 - sqlalchemy.engine.Engine - INFO - [no key 0.00013s] {}
+2025-04-04 20:42:21,039 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE film
+2025-04-04 20:42:21,039 - sqlalchemy.engine.Engine - INFO - [no key 0.00021s] {}
+2025-04-04 20:42:21,040 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-04-04 20:42:21,043 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-04-04 20:42:21,043 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:21,043 - sqlalchemy.engine.Engine - INFO - [cached since 0.01765s ago] {'table_name': 'film', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:21,044 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:21,044 - sqlalchemy.engine.Engine - INFO - [cached since 0.01848s ago] {'table_name': 'filmcast', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:21,044 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:21,045 - sqlalchemy.engine.Engine - INFO - [cached since 0.019s ago] {'table_name': 'filmproductionteam', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:21,045 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:21,045 - sqlalchemy.engine.Engine - INFO - [cached since 0.0195s ago] {'table_name': 'filmuser', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:21,045 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:21,046 - sqlalchemy.engine.Engine - INFO - [cached since 0.01997s ago] {'table_name': 'profile', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:21,046 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:21,046 - sqlalchemy.engine.Engine - INFO - [cached since 0.02041s ago] {'table_name': 'searchhistory', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:21,046 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:21,046 - sqlalchemy.engine.Engine - INFO - [cached since 0.02087s ago] {'table_name': 'favorite', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:21,047 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:21,047 - sqlalchemy.engine.Engine - INFO - [cached since 0.02131s ago] {'table_name': 'watchlater', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:21,047 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:21,047 - sqlalchemy.engine.Engine - INFO - [cached since 0.02172s ago] {'table_name': 'watchhistory', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:21,048 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE film (
+	id SERIAL NOT NULL, 
+	title VARCHAR NOT NULL, 
+	length INTEGER NOT NULL, 
+	technical_location VARCHAR NOT NULL, 
+	producer VARCHAR NOT NULL, 
+	name VARCHAR, 
+	PRIMARY KEY (id)
+)
+
+
+2025-04-04 20:42:21,048 - sqlalchemy.engine.Engine - INFO - [no key 0.00018s] {}
+2025-04-04 20:42:21,055 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE filmuser (
+	id SERIAL NOT NULL, 
+	email VARCHAR NOT NULL, 
+	password VARCHAR NOT NULL, 
+	date_registered TIMESTAMP WITHOUT TIME ZONE NOT NULL, 
+	PRIMARY KEY (id)
+)
+
+
+2025-04-04 20:42:21,055 - sqlalchemy.engine.Engine - INFO - [no key 0.00018s] {}
+2025-04-04 20:42:21,067 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE filmcast (
+	id SERIAL NOT NULL, 
+	name VARCHAR NOT NULL, 
+	role VARCHAR NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:42:21,067 - sqlalchemy.engine.Engine - INFO - [no key 0.00031s] {}
+2025-04-04 20:42:21,077 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE filmproductionteam (
+	id SERIAL NOT NULL, 
+	name VARCHAR NOT NULL, 
+	role VARCHAR NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:42:21,077 - sqlalchemy.engine.Engine - INFO - [no key 0.00024s] {}
+2025-04-04 20:42:21,085 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE profile (
+	id SERIAL NOT NULL, 
+	filmuserid INTEGER NOT NULL, 
+	displayname VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(filmuserid) REFERENCES filmuser (id)
+)
+
+
+2025-04-04 20:42:21,085 - sqlalchemy.engine.Engine - INFO - [no key 0.00029s] {}
+2025-04-04 20:42:21,090 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE searchhistory (
+	id SERIAL NOT NULL, 
+	profileid INTEGER NOT NULL, 
+	search_query VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(profileid) REFERENCES profile (id)
+)
+
+
+2025-04-04 20:42:21,090 - sqlalchemy.engine.Engine - INFO - [no key 0.00013s] {}
+2025-04-04 20:42:21,096 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE favorite (
+	id SERIAL NOT NULL, 
+	profileid INTEGER NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	favorited_date VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(profileid) REFERENCES profile (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:42:21,096 - sqlalchemy.engine.Engine - INFO - [no key 0.00017s] {}
+2025-04-04 20:42:21,102 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE watchlater (
+	id SERIAL NOT NULL, 
+	profileid INTEGER NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	dateadded VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(profileid) REFERENCES profile (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:42:21,102 - sqlalchemy.engine.Engine - INFO - [no key 0.00016s] {}
+2025-04-04 20:42:21,107 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE watchhistory (
+	id SERIAL NOT NULL, 
+	profileid INTEGER NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	timestamp INTEGER, 
+	completion INTEGER, 
+	datewatched VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(profileid) REFERENCES profile (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:42:21,108 - sqlalchemy.engine.Engine - INFO - [no key 0.00031s] {}
+2025-04-04 20:42:21,113 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-04-04 20:42:21,115 - uvicorn.error - INFO - Application startup complete.
+2025-04-04 20:42:22,519 - uvicorn.error - INFO - Shutting down
+2025-04-04 20:42:22,620 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-04 20:42:22,621 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-04 20:42:22,622 - uvicorn.error - INFO - Finished server process [11792]
+2025-04-04 20:42:23,379 - uvicorn.error - INFO - Started server process [11801]
+2025-04-04 20:42:23,381 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-04 20:42:23,393 - sqlalchemy.engine.Engine - INFO - select pg_catalog.version()
+2025-04-04 20:42:23,393 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-04-04 20:42:23,394 - sqlalchemy.engine.Engine - INFO - select current_schema()
+2025-04-04 20:42:23,394 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-04-04 20:42:23,395 - sqlalchemy.engine.Engine - INFO - show standard_conforming_strings
+2025-04-04 20:42:23,395 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-04-04 20:42:23,395 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-04-04 20:42:23,397 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:23,397 - sqlalchemy.engine.Engine - INFO - [generated in 0.00014s] {'table_name': 'film', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:23,399 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:23,399 - sqlalchemy.engine.Engine - INFO - [cached since 0.001934s ago] {'table_name': 'filmcast', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:23,400 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:23,400 - sqlalchemy.engine.Engine - INFO - [cached since 0.003068s ago] {'table_name': 'filmproductionteam', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:23,401 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:23,401 - sqlalchemy.engine.Engine - INFO - [cached since 0.004032s ago] {'table_name': 'filmuser', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:23,402 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:23,402 - sqlalchemy.engine.Engine - INFO - [cached since 0.004627s ago] {'table_name': 'profile', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:23,402 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:23,402 - sqlalchemy.engine.Engine - INFO - [cached since 0.005163s ago] {'table_name': 'searchhistory', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:23,403 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:23,403 - sqlalchemy.engine.Engine - INFO - [cached since 0.005641s ago] {'table_name': 'favorite', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:23,403 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:23,403 - sqlalchemy.engine.Engine - INFO - [cached since 0.006068s ago] {'table_name': 'watchlater', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:23,404 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:23,404 - sqlalchemy.engine.Engine - INFO - [cached since 0.006573s ago] {'table_name': 'watchhistory', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:23,404 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE watchhistory
+2025-04-04 20:42:23,404 - sqlalchemy.engine.Engine - INFO - [no key 0.00008s] {}
+2025-04-04 20:42:23,405 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE watchlater
+2025-04-04 20:42:23,405 - sqlalchemy.engine.Engine - INFO - [no key 0.00013s] {}
+2025-04-04 20:42:23,406 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE favorite
+2025-04-04 20:42:23,406 - sqlalchemy.engine.Engine - INFO - [no key 0.00008s] {}
+2025-04-04 20:42:23,407 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE searchhistory
+2025-04-04 20:42:23,407 - sqlalchemy.engine.Engine - INFO - [no key 0.00012s] {}
+2025-04-04 20:42:23,408 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE profile
+2025-04-04 20:42:23,408 - sqlalchemy.engine.Engine - INFO - [no key 0.00010s] {}
+2025-04-04 20:42:23,408 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE filmproductionteam
+2025-04-04 20:42:23,408 - sqlalchemy.engine.Engine - INFO - [no key 0.00010s] {}
+2025-04-04 20:42:23,409 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE filmcast
+2025-04-04 20:42:23,409 - sqlalchemy.engine.Engine - INFO - [no key 0.00010s] {}
+2025-04-04 20:42:23,410 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE filmuser
+2025-04-04 20:42:23,410 - sqlalchemy.engine.Engine - INFO - [no key 0.00010s] {}
+2025-04-04 20:42:23,410 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE film
+2025-04-04 20:42:23,410 - sqlalchemy.engine.Engine - INFO - [no key 0.00010s] {}
+2025-04-04 20:42:23,411 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-04-04 20:42:23,421 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-04-04 20:42:23,421 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:23,421 - sqlalchemy.engine.Engine - INFO - [cached since 0.02415s ago] {'table_name': 'film', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:23,422 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:23,422 - sqlalchemy.engine.Engine - INFO - [cached since 0.02491s ago] {'table_name': 'filmcast', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:23,422 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:23,423 - sqlalchemy.engine.Engine - INFO - [cached since 0.02537s ago] {'table_name': 'filmproductionteam', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:23,423 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:23,423 - sqlalchemy.engine.Engine - INFO - [cached since 0.02584s ago] {'table_name': 'filmuser', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:23,423 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:23,423 - sqlalchemy.engine.Engine - INFO - [cached since 0.02628s ago] {'table_name': 'profile', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:23,424 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:23,424 - sqlalchemy.engine.Engine - INFO - [cached since 0.02675s ago] {'table_name': 'searchhistory', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:23,424 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:23,424 - sqlalchemy.engine.Engine - INFO - [cached since 0.02718s ago] {'table_name': 'favorite', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:23,425 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:23,425 - sqlalchemy.engine.Engine - INFO - [cached since 0.02758s ago] {'table_name': 'watchlater', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:23,425 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:42:23,425 - sqlalchemy.engine.Engine - INFO - [cached since 0.028s ago] {'table_name': 'watchhistory', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:42:23,426 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE film (
+	id SERIAL NOT NULL, 
+	title VARCHAR NOT NULL, 
+	length INTEGER NOT NULL, 
+	technical_location VARCHAR NOT NULL, 
+	producer VARCHAR NOT NULL, 
+	name VARCHAR, 
+	PRIMARY KEY (id)
+)
+
+
+2025-04-04 20:42:23,426 - sqlalchemy.engine.Engine - INFO - [no key 0.00015s] {}
+2025-04-04 20:42:23,432 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE filmuser (
+	id SERIAL NOT NULL, 
+	email VARCHAR NOT NULL, 
+	password VARCHAR NOT NULL, 
+	date_registered TIMESTAMP WITHOUT TIME ZONE NOT NULL, 
+	PRIMARY KEY (id)
+)
+
+
+2025-04-04 20:42:23,432 - sqlalchemy.engine.Engine - INFO - [no key 0.00011s] {}
+2025-04-04 20:42:23,438 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE filmcast (
+	id SERIAL NOT NULL, 
+	name VARCHAR NOT NULL, 
+	role VARCHAR NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:42:23,438 - sqlalchemy.engine.Engine - INFO - [no key 0.00011s] {}
+2025-04-04 20:42:23,443 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE filmproductionteam (
+	id SERIAL NOT NULL, 
+	name VARCHAR NOT NULL, 
+	role VARCHAR NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:42:23,443 - sqlalchemy.engine.Engine - INFO - [no key 0.00010s] {}
+2025-04-04 20:42:23,448 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE profile (
+	id SERIAL NOT NULL, 
+	filmuserid INTEGER NOT NULL, 
+	displayname VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(filmuserid) REFERENCES filmuser (id)
+)
+
+
+2025-04-04 20:42:23,448 - sqlalchemy.engine.Engine - INFO - [no key 0.00010s] {}
+2025-04-04 20:42:23,453 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE searchhistory (
+	id SERIAL NOT NULL, 
+	profileid INTEGER NOT NULL, 
+	search_query VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(profileid) REFERENCES profile (id)
+)
+
+
+2025-04-04 20:42:23,453 - sqlalchemy.engine.Engine - INFO - [no key 0.00019s] {}
+2025-04-04 20:42:23,458 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE favorite (
+	id SERIAL NOT NULL, 
+	profileid INTEGER NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	favorited_date VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(profileid) REFERENCES profile (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:42:23,458 - sqlalchemy.engine.Engine - INFO - [no key 0.00012s] {}
+2025-04-04 20:42:23,462 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE watchlater (
+	id SERIAL NOT NULL, 
+	profileid INTEGER NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	dateadded VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(profileid) REFERENCES profile (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:42:23,463 - sqlalchemy.engine.Engine - INFO - [no key 0.00010s] {}
+2025-04-04 20:42:23,468 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE watchhistory (
+	id SERIAL NOT NULL, 
+	profileid INTEGER NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	timestamp INTEGER, 
+	completion INTEGER, 
+	datewatched VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(profileid) REFERENCES profile (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:42:23,469 - sqlalchemy.engine.Engine - INFO - [no key 0.00012s] {}
+2025-04-04 20:42:23,473 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-04-04 20:42:23,475 - uvicorn.error - INFO - Application startup complete.
+2025-04-04 20:43:04,495 - uvicorn.error - INFO - Shutting down
+2025-04-04 20:43:04,595 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-04 20:43:04,597 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-04 20:43:04,597 - uvicorn.error - INFO - Finished server process [11801]
+2025-04-04 20:43:05,127 - uvicorn.error - INFO - Started server process [11902]
+2025-04-04 20:43:05,128 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-04 20:43:05,138 - sqlalchemy.engine.Engine - INFO - select pg_catalog.version()
+2025-04-04 20:43:05,138 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-04-04 20:43:05,139 - sqlalchemy.engine.Engine - INFO - select current_schema()
+2025-04-04 20:43:05,139 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-04-04 20:43:05,140 - sqlalchemy.engine.Engine - INFO - show standard_conforming_strings
+2025-04-04 20:43:05,140 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-04-04 20:43:05,141 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-04-04 20:43:05,143 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:05,143 - sqlalchemy.engine.Engine - INFO - [generated in 0.00016s] {'table_name': 'film', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:05,144 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:05,144 - sqlalchemy.engine.Engine - INFO - [cached since 0.001606s ago] {'table_name': 'filmcast', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:05,145 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:05,145 - sqlalchemy.engine.Engine - INFO - [cached since 0.002743s ago] {'table_name': 'filmproductionteam', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:05,146 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:05,147 - sqlalchemy.engine.Engine - INFO - [cached since 0.004001s ago] {'table_name': 'filmuser', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:05,147 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:05,147 - sqlalchemy.engine.Engine - INFO - [cached since 0.004823s ago] {'table_name': 'profile', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:05,148 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:05,148 - sqlalchemy.engine.Engine - INFO - [cached since 0.005516s ago] {'table_name': 'searchhistory', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:05,149 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:05,149 - sqlalchemy.engine.Engine - INFO - [cached since 0.006273s ago] {'table_name': 'favorite', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:05,149 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:05,150 - sqlalchemy.engine.Engine - INFO - [cached since 0.006856s ago] {'table_name': 'watchlater', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:05,150 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:05,150 - sqlalchemy.engine.Engine - INFO - [cached since 0.007439s ago] {'table_name': 'watchhistory', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:05,151 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE watchhistory
+2025-04-04 20:43:05,151 - sqlalchemy.engine.Engine - INFO - [no key 0.00013s] {}
+2025-04-04 20:43:05,152 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE watchlater
+2025-04-04 20:43:05,152 - sqlalchemy.engine.Engine - INFO - [no key 0.00013s] {}
+2025-04-04 20:43:05,153 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE favorite
+2025-04-04 20:43:05,153 - sqlalchemy.engine.Engine - INFO - [no key 0.00012s] {}
+2025-04-04 20:43:05,153 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE searchhistory
+2025-04-04 20:43:05,154 - sqlalchemy.engine.Engine - INFO - [no key 0.00013s] {}
+2025-04-04 20:43:05,154 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE profile
+2025-04-04 20:43:05,154 - sqlalchemy.engine.Engine - INFO - [no key 0.00012s] {}
+2025-04-04 20:43:05,155 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE filmproductionteam
+2025-04-04 20:43:05,155 - sqlalchemy.engine.Engine - INFO - [no key 0.00009s] {}
+2025-04-04 20:43:05,156 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE filmcast
+2025-04-04 20:43:05,156 - sqlalchemy.engine.Engine - INFO - [no key 0.00012s] {}
+2025-04-04 20:43:05,156 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE filmuser
+2025-04-04 20:43:05,156 - sqlalchemy.engine.Engine - INFO - [no key 0.00010s] {}
+2025-04-04 20:43:05,157 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE film
+2025-04-04 20:43:05,157 - sqlalchemy.engine.Engine - INFO - [no key 0.00010s] {}
+2025-04-04 20:43:05,157 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-04-04 20:43:05,167 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-04-04 20:43:05,168 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:05,168 - sqlalchemy.engine.Engine - INFO - [cached since 0.02504s ago] {'table_name': 'film', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:05,168 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:05,168 - sqlalchemy.engine.Engine - INFO - [cached since 0.02583s ago] {'table_name': 'filmcast', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:05,169 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:05,169 - sqlalchemy.engine.Engine - INFO - [cached since 0.02633s ago] {'table_name': 'filmproductionteam', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:05,169 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:05,169 - sqlalchemy.engine.Engine - INFO - [cached since 0.02678s ago] {'table_name': 'filmuser', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:05,170 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:05,170 - sqlalchemy.engine.Engine - INFO - [cached since 0.02724s ago] {'table_name': 'profile', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:05,170 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:05,170 - sqlalchemy.engine.Engine - INFO - [cached since 0.02768s ago] {'table_name': 'searchhistory', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:05,171 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:05,171 - sqlalchemy.engine.Engine - INFO - [cached since 0.02811s ago] {'table_name': 'favorite', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:05,171 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:05,171 - sqlalchemy.engine.Engine - INFO - [cached since 0.02856s ago] {'table_name': 'watchlater', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:05,172 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:05,172 - sqlalchemy.engine.Engine - INFO - [cached since 0.029s ago] {'table_name': 'watchhistory', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:05,173 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE film (
+	id SERIAL NOT NULL, 
+	title VARCHAR NOT NULL, 
+	length INTEGER NOT NULL, 
+	technical_location VARCHAR NOT NULL, 
+	producer VARCHAR NOT NULL, 
+	name VARCHAR, 
+	PRIMARY KEY (id)
+)
+
+
+2025-04-04 20:43:05,173 - sqlalchemy.engine.Engine - INFO - [no key 0.00015s] {}
+2025-04-04 20:43:05,179 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE filmuser (
+	id SERIAL NOT NULL, 
+	email VARCHAR NOT NULL, 
+	password VARCHAR NOT NULL, 
+	date_registered TIMESTAMP WITHOUT TIME ZONE NOT NULL, 
+	PRIMARY KEY (id)
+)
+
+
+2025-04-04 20:43:05,179 - sqlalchemy.engine.Engine - INFO - [no key 0.00011s] {}
+2025-04-04 20:43:05,183 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE filmcast (
+	id SERIAL NOT NULL, 
+	name VARCHAR NOT NULL, 
+	role VARCHAR NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:43:05,183 - sqlalchemy.engine.Engine - INFO - [no key 0.00009s] {}
+2025-04-04 20:43:05,188 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE filmproductionteam (
+	id SERIAL NOT NULL, 
+	name VARCHAR NOT NULL, 
+	role VARCHAR NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:43:05,188 - sqlalchemy.engine.Engine - INFO - [no key 0.00009s] {}
+2025-04-04 20:43:05,193 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE profile (
+	id SERIAL NOT NULL, 
+	filmuserid INTEGER NOT NULL, 
+	displayname VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(filmuserid) REFERENCES filmuser (id)
+)
+
+
+2025-04-04 20:43:05,193 - sqlalchemy.engine.Engine - INFO - [no key 0.00011s] {}
+2025-04-04 20:43:05,197 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE searchhistory (
+	id SERIAL NOT NULL, 
+	profileid INTEGER NOT NULL, 
+	search_query VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(profileid) REFERENCES profile (id)
+)
+
+
+2025-04-04 20:43:05,197 - sqlalchemy.engine.Engine - INFO - [no key 0.00008s] {}
+2025-04-04 20:43:05,201 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE favorite (
+	id SERIAL NOT NULL, 
+	profileid INTEGER NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	favorited_date VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(profileid) REFERENCES profile (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:43:05,201 - sqlalchemy.engine.Engine - INFO - [no key 0.00011s] {}
+2025-04-04 20:43:05,206 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE watchlater (
+	id SERIAL NOT NULL, 
+	profileid INTEGER NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	dateadded VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(profileid) REFERENCES profile (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:43:05,207 - sqlalchemy.engine.Engine - INFO - [no key 0.00011s] {}
+2025-04-04 20:43:05,211 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE watchhistory (
+	id SERIAL NOT NULL, 
+	profileid INTEGER NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	timestamp INTEGER, 
+	completion INTEGER, 
+	datewatched VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(profileid) REFERENCES profile (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:43:05,211 - sqlalchemy.engine.Engine - INFO - [no key 0.00010s] {}
+2025-04-04 20:43:05,215 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-04-04 20:43:05,217 - uvicorn.error - INFO - Application startup complete.
+2025-04-04 20:43:09,683 - uvicorn.error - INFO - Shutting down
+2025-04-04 20:43:09,784 - uvicorn.error - INFO - Waiting for application shutdown.
+2025-04-04 20:43:09,785 - uvicorn.error - INFO - Application shutdown complete.
+2025-04-04 20:43:09,786 - uvicorn.error - INFO - Finished server process [11902]
+2025-04-04 20:43:10,341 - uvicorn.error - INFO - Started server process [11916]
+2025-04-04 20:43:10,343 - uvicorn.error - INFO - Waiting for application startup.
+2025-04-04 20:43:10,352 - sqlalchemy.engine.Engine - INFO - select pg_catalog.version()
+2025-04-04 20:43:10,352 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-04-04 20:43:10,353 - sqlalchemy.engine.Engine - INFO - select current_schema()
+2025-04-04 20:43:10,353 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-04-04 20:43:10,353 - sqlalchemy.engine.Engine - INFO - show standard_conforming_strings
+2025-04-04 20:43:10,353 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-04-04 20:43:10,354 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-04-04 20:43:10,357 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:10,357 - sqlalchemy.engine.Engine - INFO - [generated in 0.00027s] {'table_name': 'film', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:10,359 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:10,359 - sqlalchemy.engine.Engine - INFO - [cached since 0.002529s ago] {'table_name': 'filmcast', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:10,360 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:10,360 - sqlalchemy.engine.Engine - INFO - [cached since 0.003118s ago] {'table_name': 'filmproductionteam', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:10,361 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:10,361 - sqlalchemy.engine.Engine - INFO - [cached since 0.003845s ago] {'table_name': 'filmuser', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:10,361 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:10,361 - sqlalchemy.engine.Engine - INFO - [cached since 0.004326s ago] {'table_name': 'profile', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:10,362 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:10,362 - sqlalchemy.engine.Engine - INFO - [cached since 0.004779s ago] {'table_name': 'searchhistory', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:10,362 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:10,362 - sqlalchemy.engine.Engine - INFO - [cached since 0.005256s ago] {'table_name': 'favorite', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:10,362 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:10,363 - sqlalchemy.engine.Engine - INFO - [cached since 0.005679s ago] {'table_name': 'watchlater', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:10,363 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:10,363 - sqlalchemy.engine.Engine - INFO - [cached since 0.006105s ago] {'table_name': 'watchhistory', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:10,364 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE watchhistory
+2025-04-04 20:43:10,364 - sqlalchemy.engine.Engine - INFO - [no key 0.00012s] {}
+2025-04-04 20:43:10,365 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE watchlater
+2025-04-04 20:43:10,365 - sqlalchemy.engine.Engine - INFO - [no key 0.00009s] {}
+2025-04-04 20:43:10,365 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE favorite
+2025-04-04 20:43:10,366 - sqlalchemy.engine.Engine - INFO - [no key 0.00006s] {}
+2025-04-04 20:43:10,366 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE searchhistory
+2025-04-04 20:43:10,366 - sqlalchemy.engine.Engine - INFO - [no key 0.00006s] {}
+2025-04-04 20:43:10,367 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE profile
+2025-04-04 20:43:10,367 - sqlalchemy.engine.Engine - INFO - [no key 0.00006s] {}
+2025-04-04 20:43:10,368 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE filmproductionteam
+2025-04-04 20:43:10,368 - sqlalchemy.engine.Engine - INFO - [no key 0.00005s] {}
+2025-04-04 20:43:10,368 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE filmcast
+2025-04-04 20:43:10,368 - sqlalchemy.engine.Engine - INFO - [no key 0.00005s] {}
+2025-04-04 20:43:10,369 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE filmuser
+2025-04-04 20:43:10,369 - sqlalchemy.engine.Engine - INFO - [no key 0.00005s] {}
+2025-04-04 20:43:10,369 - sqlalchemy.engine.Engine - INFO - 
+DROP TABLE film
+2025-04-04 20:43:10,370 - sqlalchemy.engine.Engine - INFO - [no key 0.00013s] {}
+2025-04-04 20:43:10,370 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-04-04 20:43:10,381 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-04-04 20:43:10,381 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:10,381 - sqlalchemy.engine.Engine - INFO - [cached since 0.02457s ago] {'table_name': 'film', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:10,382 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:10,382 - sqlalchemy.engine.Engine - INFO - [cached since 0.02533s ago] {'table_name': 'filmcast', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:10,383 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:10,383 - sqlalchemy.engine.Engine - INFO - [cached since 0.02582s ago] {'table_name': 'filmproductionteam', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:10,383 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:10,383 - sqlalchemy.engine.Engine - INFO - [cached since 0.02628s ago] {'table_name': 'filmuser', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:10,384 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:10,384 - sqlalchemy.engine.Engine - INFO - [cached since 0.02671s ago] {'table_name': 'profile', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:10,384 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:10,384 - sqlalchemy.engine.Engine - INFO - [cached since 0.02757s ago] {'table_name': 'searchhistory', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:10,385 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:10,385 - sqlalchemy.engine.Engine - INFO - [cached since 0.02814s ago] {'table_name': 'favorite', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:10,386 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:10,386 - sqlalchemy.engine.Engine - INFO - [cached since 0.02868s ago] {'table_name': 'watchlater', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:10,386 - sqlalchemy.engine.Engine - INFO - SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2025-04-04 20:43:10,386 - sqlalchemy.engine.Engine - INFO - [cached since 0.02906s ago] {'table_name': 'watchhistory', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2025-04-04 20:43:10,387 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE film (
+	id SERIAL NOT NULL, 
+	title VARCHAR NOT NULL, 
+	length INTEGER NOT NULL, 
+	technical_location VARCHAR NOT NULL, 
+	producer VARCHAR NOT NULL, 
+	name VARCHAR, 
+	PRIMARY KEY (id)
+)
+
+
+2025-04-04 20:43:10,387 - sqlalchemy.engine.Engine - INFO - [no key 0.00008s] {}
+2025-04-04 20:43:10,392 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE filmuser (
+	id SERIAL NOT NULL, 
+	email VARCHAR NOT NULL, 
+	password VARCHAR NOT NULL, 
+	date_registered TIMESTAMP WITHOUT TIME ZONE NOT NULL, 
+	PRIMARY KEY (id)
+)
+
+
+2025-04-04 20:43:10,393 - sqlalchemy.engine.Engine - INFO - [no key 0.00010s] {}
+2025-04-04 20:43:10,397 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE filmcast (
+	id SERIAL NOT NULL, 
+	name VARCHAR NOT NULL, 
+	role VARCHAR NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:43:10,397 - sqlalchemy.engine.Engine - INFO - [no key 0.00011s] {}
+2025-04-04 20:43:10,402 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE filmproductionteam (
+	id SERIAL NOT NULL, 
+	name VARCHAR NOT NULL, 
+	role VARCHAR NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:43:10,403 - sqlalchemy.engine.Engine - INFO - [no key 0.00018s] {}
+2025-04-04 20:43:10,408 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE profile (
+	id SERIAL NOT NULL, 
+	filmuserid INTEGER NOT NULL, 
+	displayname VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(filmuserid) REFERENCES filmuser (id)
+)
+
+
+2025-04-04 20:43:10,408 - sqlalchemy.engine.Engine - INFO - [no key 0.00012s] {}
+2025-04-04 20:43:10,412 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE searchhistory (
+	id SERIAL NOT NULL, 
+	profileid INTEGER NOT NULL, 
+	search_query VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(profileid) REFERENCES profile (id)
+)
+
+
+2025-04-04 20:43:10,412 - sqlalchemy.engine.Engine - INFO - [no key 0.00010s] {}
+2025-04-04 20:43:10,416 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE favorite (
+	id SERIAL NOT NULL, 
+	profileid INTEGER NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	favorited_date VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(profileid) REFERENCES profile (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:43:10,417 - sqlalchemy.engine.Engine - INFO - [no key 0.00010s] {}
+2025-04-04 20:43:10,421 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE watchlater (
+	id SERIAL NOT NULL, 
+	profileid INTEGER NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	dateadded VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(profileid) REFERENCES profile (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:43:10,421 - sqlalchemy.engine.Engine - INFO - [no key 0.00010s] {}
+2025-04-04 20:43:10,426 - sqlalchemy.engine.Engine - INFO - 
+CREATE TABLE watchhistory (
+	id SERIAL NOT NULL, 
+	profileid INTEGER NOT NULL, 
+	film_id INTEGER NOT NULL, 
+	timestamp INTEGER, 
+	completion INTEGER, 
+	datewatched VARCHAR NOT NULL, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(profileid) REFERENCES profile (id), 
+	FOREIGN KEY(film_id) REFERENCES film (id)
+)
+
+
+2025-04-04 20:43:10,426 - sqlalchemy.engine.Engine - INFO - [no key 0.00011s] {}
+2025-04-04 20:43:10,431 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-04-04 20:43:10,433 - uvicorn.error - INFO - Application startup complete.
