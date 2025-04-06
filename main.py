@@ -24,6 +24,7 @@ db_user = os.getenv("DB_USER", "watcher")
 db_password = os.getenv("DB_PASSWORD", "films")
 db_host = os.getenv("DB_HOST", "")
 instance_connection_name = os.getenv("INSTANCE_CONNECTION_NAME", "")
+
 setup_db = os.getenv("SETUPDB", "Dynamic")
 db_url = os.getenv("DB_URL", "")
 static_media_directory = os.getenv("MEDIA_DIRECTORY", "")
@@ -36,7 +37,6 @@ if instance_connection_name:
     print(f"[INFO]: using google cloud with url: {url_postgresql}")
 elif db_host or db_url:
     # Render.com
-    url_postgresql = f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}"
     url_postgresql = db_url
     print(f"[INFO]: using render with url: {url_postgresql}")
 else:
@@ -54,14 +54,15 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(
     os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "10"))
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-# IMAGES_DIR = Path("static/images")
+IMAGES_DIR = Path(f"{static_media_directory}/images")
+FILMS_DIR = Path(f"{static_media_directory}/films")
 CHUNK_SIZE = 1024*1024
 
 
 # Configure logging
 logging.basicConfig(
-    filename='app.log',  # Log file name
-    level=logging.INFO,  # Log level
+    filename='app.log',
+    level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'  # Log format
 )
 
@@ -70,6 +71,8 @@ logging.basicConfig(
 sqlmodel_logger = logging.getLogger('sqlmodel')
 sqlmodel_logger.setLevel(logging.WARNING)
 
+logging.info(f"[INFO]: got media directory: {static_media_directory}")
+logging.info(f"[INFO]: got images directory: {IMAGES_DIR}")
 
 def get_session():
     with Session(engine) as session:
@@ -113,10 +116,6 @@ async def lifespan(app: FastAPI):
         create_db_and_tables()
         print(f"{setup_db} db configured")
 
-    # Ensure images folder exists
-    # IMAGES_DIR.mkdir(parents=True, exist_ok=True)
-    # print(f"Images directory: {IMAGES_DIR.absolute()}")
-
     yield
 
 
@@ -128,6 +127,7 @@ origins = [
     "https://minflix-kzt6.onrender.com",
     "https://minflixfrontend.onrender.com/",
     "https://7d99f2d2.minflixclient.pages.dev",
+    "https://minflixclient.pages.dev",
     "https://minflixclient-production.up.railway.app",
     "http://localhost:3000",
 ]
@@ -352,14 +352,11 @@ async def get_film_list() -> str:
 
 @app.get("/film")
 async def stream_film(range: str = Header(None)):
-    print("[INFO] got film endpoint")
-
     start, end = range.replace("bytes=", "").split("-")
     start = int(start)
     end = int(end) if end else start + CHUNK_SIZE
 
     current_film = static_media_directory + "/EvilBrainFromOuterSpace_512kb.mp4"
-    print(f"[INFO]: got film directory: {current_film}")
     logging.info(f"[INFO]: got the file as: {current_film}")
     current_film = Path(current_film)
 
@@ -375,15 +372,23 @@ async def stream_film(range: str = Header(None)):
         return Response(data, status_code=206, headers=headers, media_type="video/mp4")
 
 
-'''
 @app.get("/images/{image_name}")
 async def get_image(image_name: str):
-    # Sanitize the filename to prevent path traversal
     try:
-        image_path = (IMAGES_DIR / f"{image_name}.jpg").resolve()
-        print(f"[INFO]: image path gotten {image_path}")
+        # Construct the intended path
+        image_path = (IMAGES_DIR / f"{image_name}").resolve()
+        logging.info(f"[INFO]: got resolved path {image_path}")
+
+        # Critical security check - ensure the resolved path is within IMAGES_DIR
+        if not str(image_path).startswith(str(IMAGES_DIR.resolve())):
+            logging.info(f"[SECURITY]: Attempted path traversal: {image_name}")
+            raise HTTPException(status_code=403, detail="Access denied")
+
+        image_path = (IMAGES_DIR / f"{image_name}").resolve()
+        logging.info(f"[INFO]: image path gotten {image_path}")
+
         if not image_path.exists():
-            print(f"[INFO]: image not found")
+            logging.info(f"[INFO]: image not found")
             raise HTTPException(status_code=404, detail="Image not found")
 
         # Set cache headers (1 hour = 3600 seconds)
@@ -399,4 +404,3 @@ async def get_image(image_name: str):
         if isinstance(e, HTTPException):
             raise e
         raise HTTPException(status_code=400, detail="Invalid image request")
-'''

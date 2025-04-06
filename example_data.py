@@ -6,7 +6,7 @@ EXAMPLEFILMS = [
             Film(
                 title="Echoes of Tomorrow",
                 length=120,
-                technical_location="Vancouver",
+                image_name="Vancouver",
                 producer="Elena Garcia",
                 film_cast=[
                     FilmCast(name="Liam Walker", role="Time Traveler"),
@@ -22,7 +22,7 @@ EXAMPLEFILMS = [
             Film(
                 title="Under the Crimson Sun",
                 length=140,
-                technical_location="Arizona",
+                image_name="Arizona",
                 producer="Jackson King",
                 film_cast=[
                     FilmCast(name="Amelia Hart", role="Heroine"),
@@ -38,7 +38,7 @@ EXAMPLEFILMS = [
             Film(
                 title="The Whispering Waves",
                 length=130,
-                technical_location="Sydney",
+                image_name="Sydney",
                 producer="Diana Hughes",
                 film_cast=[
                     FilmCast(name="Oliver Hale", role="Lighthouse Keeper"),
@@ -54,7 +54,7 @@ EXAMPLEFILMS = [
             Film(
                 title="Starlight Odyssey",
                 length=150,
-                technical_location="Cape Canaveral",
+                image_name="Cape Canaveral",
                 producer="Henry Wells",
                 film_cast=[
                     FilmCast(name="Evelyn James", role="Astronaut"),
@@ -70,7 +70,7 @@ EXAMPLEFILMS = [
             Film(
                 title="Chasing Shadows",
                 length=110,
-                technical_location="London",
+                image_name="London",
                 producer="Victoria Hayes",
                 film_cast=[
                     FilmCast(name="Emma Brown", role="Detective"),

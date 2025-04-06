@@ -6,7 +6,7 @@ class Film(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     title: str
     length: int
-    technical_location: str
+    image_name: str
     producer: str
     name: Optional[str] = None  # Added for backward compatibility
 
@@ -35,32 +35,3 @@ class FilmProductionTeam(SQLModel, table=True):
 
     # Relationship
     film: Film = Relationship(back_populates="production_team")
-
-
-# Pydantic models for nested relationships
-class FilmCastRead(SQLModel):
-    id: int
-    name: str
-    role: str
-
-
-class FilmProductionTeamRead(SQLModel):
-    id: int
-    name: str
-    role: str
-
-
-class FilmRead(SQLModel):
-    id: int
-    title: str
-    length: int
-    technical_location: str
-    producer: str
-    name: Optional[str] = None  # Added for backward compatibility
-    # Nested FilmCast data
-    film_cast: List[FilmCastRead]
-    # Nested Production data
-    production_team: List[FilmProductionTeamRead]
-
-    class Config:
-        orm_mode = True
