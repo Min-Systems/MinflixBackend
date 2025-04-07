@@ -15,7 +15,9 @@ from pathlib import Path
 from film_models import *
 from user_models import *
 from example_data import *
+from film_data import *
 from token_models import *
+from film_token_models import *
 
 # Localhost environment variables for local deployment
 # Dockerfile has production environment variables
@@ -44,7 +46,7 @@ else:
     url_postgresql = f"postgresql://{db_user}:{db_password}@localhost/{db_name}"
     print(f"[INFO]: using local with url: {url_postgresql}")
 
-engine = create_engine(url_postgresql, echo=True)
+engine = create_engine(url_postgresql, echo=False)
 
 # openssl rand -hex 32 to generate key(more on this later)
 SECRET_KEY = os.getenv(
@@ -74,6 +76,7 @@ sqlmodel_logger.setLevel(logging.WARNING)
 logging.info(f"[INFO]: got media directory: {static_media_directory}")
 logging.info(f"[INFO]: got images directory: {IMAGES_DIR}")
 
+
 def get_session():
     with Session(engine) as session:
         yield session
@@ -98,6 +101,12 @@ def create_example_data(session: SessionDep):
     session.commit()
 
 
+def add_films(session: SessionDep):
+    for film in FILMS:
+        session.add(film)
+    session.commit()
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Get setup mode from environment variable (Dynamic is default)
@@ -115,6 +124,17 @@ async def lifespan(app: FastAPI):
     elif setup_db == "Production":
         create_db_and_tables()
         print(f"{setup_db} db configured")
+
+    # add the films to the database
+    with Session(engine) as session:
+        # check if one film is in the database
+        statement = select(Film)
+        films_present = session.exec(statement).first()
+        if not films_present:
+            add_films(session)
+            print(f"[INFO]: added films")
+        else:
+            print(f"[INFO]: no films added")
 
     yield
 
@@ -234,8 +254,7 @@ async def health_check():
 @app.post("/registration")
 async def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
     try:
-        statement = select(FilmUser).where(
-            FilmUser.username == form_data.username)
+        statement = select(FilmUser).where(FilmUser.username == form_data.username)
         current_user = session.exec(statement).first()
 
         if current_user:
@@ -338,14 +357,11 @@ async def add_watch_later(profile_id: int, film_id: int, session: SessionDep, cu
 
 
 @app.get("/getfilms")
-async def get_film_list() -> str:
-    result = ""
-    the_path = Path(static_media_directory)
-    # Get all files in the directory
-    files = [str(file) for file in the_path.iterdir() if file.is_file()]
-    # Create a string with all file names
-    result = ', '.join(files)
-    print(f"[INFO]: the files found: {result}")
+async def get_film_list(session: SessionDep) -> list[FilmToken]:
+    statement = select(Film)
+    result = session.exec(statement).all()
+    # log the result in "data" form
+    print(f"[INFO]: film data: {result}")
 
     return result
 
