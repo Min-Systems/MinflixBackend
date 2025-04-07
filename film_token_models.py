@@ -7,3 +7,4 @@ class FilmToken(BaseModel):
     id: int
     title: str
     image_name: str
+    file_name: str

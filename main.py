@@ -271,7 +271,9 @@ async def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm
             username=form_data.username,
             password=hashed_password,
             date_registered=datetime.datetime.now(),
-            profiles=[]
+            profiles=[],
+            watch_later=[],
+            favorites=[]
         )
 
         session.add(new_user)
@@ -356,6 +358,14 @@ async def add_watch_later(profile_id: int, film_id: int, session: SessionDep, cu
             pass
 
 
+@app.post("/favorite/{profile_id}/{film_id}")
+async def add_favorite(profile_id: int, film_id: int, session: SessionDep, current_filmuser: Annotated[int, Depends(get_current_filmuser)]):
+    current_user = session.get(FilmUser, current_filmuser)
+    print(f"Got profile_id: {profile_id}")
+    print(f"Got film_id: {film_id}")
+    pass
+
+
 @app.get("/getfilms")
 async def get_film_list(session: SessionDep) -> list[FilmToken]:
     statement = select(Film)
@@ -366,26 +376,34 @@ async def get_film_list(session: SessionDep) -> list[FilmToken]:
     return result
 
 
-@app.get("/film")
-async def stream_film(range: str = Header(None)):
-    start, end = range.replace("bytes=", "").split("-")
-    start = int(start)
-    end = int(end) if end else start + CHUNK_SIZE
+@app.get("/film/{film_name}")
+async def stream_film(film_name: str, range: str = Header(None)):
+    try:
+        start, end = range.replace("bytes=", "").split("-")
+        start = int(start)
+        end = int(end) if end else start + CHUNK_SIZE
 
-    current_film = static_media_directory + "/EvilBrainFromOuterSpace_512kb.mp4"
-    logging.info(f"[INFO]: got the file as: {current_film}")
-    current_film = Path(current_film)
+        #current_film = static_media_directory + "/EvilBrainFromOuterSpace_512kb.mp4"
+        current_film = f"{static_media_directory}/films/{film_name}"
+        logging.info(f"[INFO]: got the file as: {current_film}")
+        print(f"[INFO]: got the file as: {current_film}")
+        current_film = Path(current_film)
 
-    with open(current_film, "rb") as video:
-        video.seek(start)
-        data = video.read(end - start)
-        filesize = str(current_film.stat().st_size)
-        headers = {
-            'Content-Range': f'bytes {str(start)}-{str(end)}/{filesize}',
-            'Accept-Ranges': 'bytes'
-        }
+        with open(current_film, "rb") as video:
+            print(f"[INFO]: opened file")
+            video.seek(start)
+            data = video.read(end - start)
+            filesize = str(current_film.stat().st_size)
+            headers = {
+                'Content-Range': f'bytes {str(start)}-{str(end)}/{filesize}',
+                'Accept-Ranges': 'bytes'
+            }
 
-        return Response(data, status_code=206, headers=headers, media_type="video/mp4")
+            return Response(data, status_code=206, headers=headers, media_type="video/mp4")
+    except Exception as e:
+        if isinstance(e, HTTPException):
+            raise e
+        raise HTTPException(status_code=400, detail="Invalid film request")
 
 
 @app.get("/images/{image_name}")

@@ -17,10 +17,16 @@ class TokenProfileDataModel(BaseModel):
     id: int
     displayname: str
     watch_later: List["TokenWatchLaterDataModel"]
+    favorites: List["TokenFavoriteDataModel"]
     model_config = ConfigDict(from_attributes=True)
 
 
 class TokenWatchLaterDataModel(BaseModel):
+    id: int
+    film_id: int
+    model_config = ConfigDict(from_attributes=True)
+
+class TokenFavoriteDataModel(BaseModel):
     id: int
     film_id: int
     model_config = ConfigDict(from_attributes=True)
