@@ -9,12 +9,28 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Install gunicorn explicitly
 RUN pip install --no-cache-dir gunicorn
 
+<<<<<<< HEAD
 # Copy the application code
 COPY . .
 
 # Envrionment variables
 ENV DB_NAME=filmpoc
 ENV INSTANCE_CONNECTION_NAME=minflix-451300:us-west2:streaming-db
+=======
+# Make folder for images
+RUN mkdir -p /app/static/images
+
+# Copy the application code
+COPY . .
+
+# Ensure correct permissions for images folder
+RUN chmod -R 755 /app/static
+
+# Envrionment variables
+ENV DB_NAME=filmpoc
+# ENV INSTANCE_CONNECTION_NAME=minflix-451300:us-west2:streaming-db
+ENV DB_HOST=dpg-cvesi2nnoe9s73ba3ss0-a
+>>>>>>> develop
 ENV SETUPDB=Production
 ENV ALGORITHM=HS256
 ENV ACCESS_TOKEN_EXPIRE_MINUTES=10

@@ -34,7 +34,10 @@ class Profile(SQLModel, table=True):
     watch_history: List["WatchHistory"] = Relationship(back_populates="profile")
 
 
+<<<<<<< HEAD
 # The rest of your model definitions remain the same
+=======
+>>>>>>> develop
 class SearchHistory(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     profileid: int = Field(foreign_key="profile.id")
@@ -65,4 +68,8 @@ class WatchHistory(SQLModel, table=True):
     timestamp: Optional[int]
     completion: Optional[int]
     datewatched: str
+<<<<<<< HEAD
     profile: Profile = Relationship(back_populates="watch_history")
+=======
+    profile: Profile = Relationship(back_populates="watch_history")
+>>>>>>> develop
