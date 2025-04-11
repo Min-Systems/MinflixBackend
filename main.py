@@ -19,34 +19,12 @@ from film_data import *
 from token_models import *
 from film_token_models import *
 
-# Localhost environment variables for local deployment
-# Dockerfile has production environment variables
-db_name = os.getenv("DB_NAME", "filmpoc")
-db_user = os.getenv("DB_USER", "watcher")
-db_password = os.getenv("DB_PASSWORD", "films")
-db_host = os.getenv("DB_HOST", "")
-instance_connection_name = os.getenv("INSTANCE_CONNECTION_NAME", "")
-
-setup_db = os.getenv("SETUPDB", "Dynamic")
-db_url = os.getenv("DB_URL", "")
+db_setup = os.getenv("DATABASE_SETUP", "Dynamic")
+db_url = os.getenv(
+    "DATABASE_URL", "postgresql://watcher:films@localhost/filmpoc")
 static_media_directory = os.getenv("MEDIA_DIRECTORY", "")
 
-
-# Loads production database or local database
-if instance_connection_name:
-    # Google Cloud
-    url_postgresql = f"postgresql+psycopg2://{db_user}:{db_password}@/{db_name}?host=/cloudsql/{instance_connection_name}"
-    print(f"[INFO]: using google cloud with url: {url_postgresql}")
-elif db_host or db_url:
-    # Render.com
-    url_postgresql = db_url
-    print(f"[INFO]: using render with url: {url_postgresql}")
-else:
-    # Local
-    url_postgresql = f"postgresql://{db_user}:{db_password}@localhost/{db_name}"
-    print(f"[INFO]: using local with url: {url_postgresql}")
-
-engine = create_engine(url_postgresql, echo=False)
+engine = create_engine(db_url, echo=False)
 
 # openssl rand -hex 32 to generate key(more on this later)
 SECRET_KEY = os.getenv(
@@ -54,11 +32,11 @@ SECRET_KEY = os.getenv(
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(
     os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "10"))
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 IMAGES_DIR = Path(f"{static_media_directory}/images")
 FILMS_DIR = Path(f"{static_media_directory}/films")
 CHUNK_SIZE = 1024*1024
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 # Configure logging
@@ -110,20 +88,20 @@ def add_films(session: SessionDep):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Get setup mode from environment variable (Dynamic is default)
-    print(f"Database setup mode: {setup_db}")
-    if setup_db == "Example":
+    print(f"Database setup mode: {db_setup}")
+    if db_setup == "Example":
         drop_all_tables()
         create_db_and_tables()
         with Session(engine) as session:
             create_example_data(session)
-        print(f"{setup_db} db configured")
-    elif setup_db == "Dynamic":
+        print(f"{db_setup} db configured")
+    elif db_setup == "Dynamic":
         drop_all_tables()
         create_db_and_tables()
-        print(f"{setup_db} db configured")
-    elif setup_db == "Production":
+        print(f"{db_setup} db configured")
+    elif db_setup == "Production":
         create_db_and_tables()
-        print(f"{setup_db} db configured")
+        print(f"{db_setup} db configured")
 
     # add the films to the database
     with Session(engine) as session:
@@ -143,10 +121,6 @@ app = FastAPI(lifespan=lifespan)
 
 
 origins = [
-    "https://minflixhd.web.app",
-    "https://minflix-kzt6.onrender.com",
-    "https://minflixfrontend.onrender.com/",
-    "https://7d99f2d2.minflixclient.pages.dev",
     "https://minflixclient.pages.dev",
     "https://minflixclient-production.up.railway.app",
     "http://localhost:3000",
@@ -192,8 +166,8 @@ def verify_jwt_token(token: str) -> dict:
 async def root():
     return {
         "message": "MinFlix API is running",
-        "version": "1.0",
-        "environment": "production" if instance_connection_name or db_host else "local",
+        "version": "6.0",
+        "environment": "production",
         "endpoints": [
             "/login",
             "/registration",
@@ -202,30 +176,6 @@ async def root():
             "/schema"
         ]
     }
-
-
-@app.get("/schema")
-async def inspect_schema():
-    try:
-        inspector = inspect(engine)
-        tables = inspector.get_table_names()
-
-        schema_info = {}
-        for table_name in tables:
-            columns = inspector.get_columns(table_name)
-            schema_info[table_name] = [
-                {"name": col["name"], "type": str(col["type"])}
-                for col in columns
-            ]
-
-        return {
-            "tables": tables,
-            "schema": schema_info
-        }
-    except Exception as e:
-        return {
-            "error": str(e)
-        }
 
 
 # Health check endpoint
@@ -240,7 +190,7 @@ async def health_check():
         return {
             "status": "healthy" if connected else "unhealthy",
             "database": "connected" if connected else "disconnected",
-            "environment": "production" if instance_connection_name else "local",
+            "environment": "production",
             "timestamp": datetime.datetime.now().isoformat()
         }
     except Exception as e:
@@ -254,7 +204,8 @@ async def health_check():
 @app.post("/registration")
 async def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
     try:
-        statement = select(FilmUser).where(FilmUser.username == form_data.username)
+        statement = select(FilmUser).where(
+            FilmUser.username == form_data.username)
         current_user = session.exec(statement).first()
 
         if current_user:
@@ -341,11 +292,6 @@ async def edit_profile(displayname: Annotated[str, Form()], newdisplayname: Anno
     return create_jwt_token(TokenModel.model_validate(current_user).model_dump())
 
 
-@app.post("/removeprofile")
-def remove_profile():
-    print("Got remove")
-
-
 @app.post("/watchlater/{profile_id}/{film_id}")
 async def add_watch_later(profile_id: int, film_id: int, session: SessionDep, current_filmuser: Annotated[int, Depends(get_current_filmuser)]):
     current_user = session.get(FilmUser, current_filmuser)
@@ -383,7 +329,7 @@ async def stream_film(film_name: str, range: str = Header(None)):
         start = int(start)
         end = int(end) if end else start + CHUNK_SIZE
 
-        #current_film = static_media_directory + "/EvilBrainFromOuterSpace_512kb.mp4"
+        # current_film = static_media_directory + "/EvilBrainFromOuterSpace_512kb.mp4"
         current_film = f"{static_media_directory}/films/{film_name}"
         logging.info(f"[INFO]: got the file as: {current_film}")
         print(f"[INFO]: got the file as: {current_film}")
