@@ -1,6 +1,6 @@
 from typing import List
 from pydantic import BaseModel, ConfigDict
-from user_models import *
+from .user_models import *
 
 
 class TokenModel(BaseModel):

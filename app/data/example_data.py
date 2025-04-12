@@ -1,6 +1,8 @@
 import datetime
-from user_models import *
-from film_models import *
+# from user_models import *
+# from film_models import *
+from ..models.user_models import *
+from ..models.film_models import *
 
 EXAMPLEFILMS = [
             Film(

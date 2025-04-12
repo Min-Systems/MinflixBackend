@@ -1,7 +1,8 @@
 from sqlmodel import Field, SQLModel, Relationship, Column
 from typing import List, Optional
 from pydantic import BaseModel
-from film_models import *
+# from film_models import *
+from .film_models import *
 import datetime
 from sqlalchemy import String
 
