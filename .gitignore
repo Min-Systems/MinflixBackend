@@ -1,6 +1,10 @@
 .backend_env/
 __pycache__/
+<<<<<<< HEAD
+junk_code.py
+=======
 static/films
 static/images
 static/filmsbig/
 *.log
+>>>>>>> develop
