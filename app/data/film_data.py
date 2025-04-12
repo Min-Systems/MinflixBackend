@@ -1,4 +1,5 @@
-from film_models import *
+# from film_models import *
+from ..models.film_models import *
 FILMS = [
     Film(
         title="Assignment: Outer space",

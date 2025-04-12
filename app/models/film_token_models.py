@@ -1,6 +1,6 @@
 from typing import List
 from pydantic import BaseModel, ConfigDict
-from film_models import *
+from .film_models import *
 
 
 class FilmToken(BaseModel):
