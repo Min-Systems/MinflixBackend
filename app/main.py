@@ -76,6 +76,8 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
+    logging.info(f"[INFO]: got root route")
+    print("[INFO]: got root route")
     return {
         "message": "MinFlix API is running",
         "version": "6.0",
