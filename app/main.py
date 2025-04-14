@@ -188,7 +188,7 @@ async def add_watch_later(profile_id: str, film_id: str, session: SessionDep, cu
     # get the profile inside the session
     for profile in current_user.profiles:
         if profile.id == int(profile_id):
-            profile.watch_later.append(WatchLater(int(profile_id), int(film_id)))
+            profile.watch_later.append(WatchLater(profileid=int(profile_id), film_id=int(film_id)))
             break
 
     session.add(current_user)
@@ -207,7 +207,7 @@ async def add_favorite(profile_id: int, film_id: int, session: SessionDep, curre
     # get the profile inside the session
     for profile in current_user.profiles:
         if profile.id == int(profile_id):
-            profile.favorites.append(Favorite(int(profile_id), int(film_id)))
+            profile.favorites.append(Favorite(profileid=int(profile_id), film_id=int(film_id)))
             break
 
     session.add(current_user)
