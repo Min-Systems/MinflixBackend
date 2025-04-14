@@ -170,6 +170,7 @@ async def edit_profile(displayname: Annotated[str, Form()], newdisplayname: Anno
     for profile in current_user.profiles:
         if profile.displayname == displayname:
             profile.displayname = newdisplayname
+            break
 
     session.add(current_user)
     session.commit()
@@ -179,31 +180,47 @@ async def edit_profile(displayname: Annotated[str, Form()], newdisplayname: Anno
 
 
 @app.post("/watchlater/{profile_id}/{film_id}")
-async def add_watch_later(profile_id: int, film_id: int, session: SessionDep, current_filmuser: Annotated[int, Depends(get_current_filmuser)]):
+async def add_watch_later(profile_id: str, film_id: str, session: SessionDep, current_filmuser: UserDep) -> str:
     current_user = session.get(FilmUser, current_filmuser)
     print(f"Got profile_id: {profile_id}")
     print(f"Got film_id: {film_id}")
-    # add the new watch_later
+
     # get the profile inside the session
-    for profile in current_user:
-        if profile.id == profile_id:
-            pass
+    for profile in current_user.profiles:
+        if profile.id == int(profile_id):
+            profile.watch_later.append(WatchLater(int(profile_id), int(film_id)))
+            break
+
+    session.add(current_user)
+    session.commit()
+    session.refresh(current_user)
+
+    return create_jwt_token(TokenModel.model_validate(current_user).model_dump())
 
 
 @app.post("/favorite/{profile_id}/{film_id}")
-async def add_favorite(profile_id: int, film_id: int, session: SessionDep, current_filmuser: Annotated[int, Depends(get_current_filmuser)]):
+async def add_favorite(profile_id: int, film_id: int, session: SessionDep, current_filmuser: UserDep):
     current_user = session.get(FilmUser, current_filmuser)
     print(f"Got profile_id: {profile_id}")
     print(f"Got film_id: {film_id}")
-    pass
+
+    # get the profile inside the session
+    for profile in current_user.profiles:
+        if profile.id == int(profile_id):
+            profile.favorites.append(Favorite(int(profile_id), int(film_id)))
+            break
+
+    session.add(current_user)
+    session.commit()
+    session.refresh(current_user)
+
+    return create_jwt_token(TokenModel.model_validate(current_user).model_dump())
 
 
 @app.get("/getfilms")
 async def get_film_list(session: SessionDep) -> list[FilmToken]:
     statement = select(Film)
     result = session.exec(statement).all()
-    # log the result in "data" form
-    print(f"[INFO]: film data: {result}")
 
     return result
 
