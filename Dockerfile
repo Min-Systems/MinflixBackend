@@ -16,5 +16,4 @@ COPY . .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Run the web service on container startup.
-# CMD ["hypercorn", "app.main:app", "--bind", "::"]
 CMD ["fastapi", "run", "app/main.py", "--port", "8080"]
