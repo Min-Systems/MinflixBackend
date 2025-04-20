@@ -1,11 +1,29 @@
 import os
-from pathlib import Path
+from pathlib import (Path)
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer
 from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
+    """
+        Settings class to configure backend
+
+        Contains environment variables and global variables
+
+        Attributes:
+            db_setup (str): variable to control whether the database is reset at startup [Dynamic, Production, Example]
+            db_url (str): connection url for database
+            static_media_directory (str): directory for static media
+            secret_key (str): the secret key to encode and decode jwt's
+            algorithm (str): used to encode and decode jwt's
+            access_token_expire_minutes (int): the number of minutes for the token to live
+            images_dir (Path): path to the images
+            films_dir (Path): path to the films
+            chunk_size (int): chunk size to send the film part
+            oauth2_scheme (OAuth2PasswordBearer): the default url to get tokens
+            pwd_context (CryptContext): algorithm and context to encrypt passwords
+    """
     db_setup: str = os.getenv("DATABASE_SETUP", "Dynamic")
     db_url: str = os.getenv(
         "DATABASE_URL", "postgresql://watcher:films@localhost/filmpoc")
