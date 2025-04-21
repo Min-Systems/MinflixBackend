@@ -29,6 +29,12 @@ logging.info(f"[INFO]: got images directory: {settings.images_dir}")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """
+        This is the lifespace that controls startup and database configuration
+
+        Parameters:
+            app (FastAPI): the fastapi app that the lifecycle will bind to
+    """
     with Session(engine) as session:
         print(f"Database setup mode: {settings.db_setup}")
         if settings.db_setup == "Example":
@@ -76,8 +82,13 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
+    """
+        This route just returns telemetry data
+
+        Returns:
+            dict: information about api
+    """
     logging.info(f"[INFO]: got root route")
-    print("[INFO]: got root route")
     return {
         "message": "MinFlix API is running",
         "version": "6.0",
@@ -86,14 +97,29 @@ async def root():
             "/login",
             "/registration",
             "/addprofile",
-            "/health",
-            "/schema"
+            "/editprofile",
+            "/watchlater",
+            "/favorite",
+            "/watchhistory",
+            "/getfilms",
+            "/film",
+            "/images"
         ]
     }
 
 
 @app.post("/registration")
 async def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
+    """
+        This is the registration endpoint where users can make an account
+
+        Parameters:
+            session (SessionDep): this is the database session
+            form_data (OAuth2PasswordRequestForm): this is the formdata from the frontend form
+
+        Returns:
+            str: the jwt token that represents the new state after edits
+    """
     try:
         statement = select(FilmUser).where(
             FilmUser.username == form_data.username)
@@ -115,6 +141,7 @@ async def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm
             date_registered=datetime.datetime.now(),
             profiles=[],
             watch_later=[],
+            watch_history=[],
             favorites=[]
         )
 
@@ -124,109 +151,341 @@ async def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm
 
         return create_jwt_token(TokenModel.model_validate(new_user).model_dump())
 
-    except HTTPException:
-        # Re-raise HTTP exceptions
-        raise
-    except Exception as e:
-        # Log the error and return a generic message
-        print(f"Registration error: {str(e)}")
+    # Catch errors
+    except JWTError:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=401,  # Unauthorized
+            detail=f"Invalid JWT token: {str(JWTError)}"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,  # Internal server error
             detail=f"Registration failed: {str(e)}"
         )
 
 
 @app.post("/login")
 async def login(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
-    statement = select(FilmUser).where(FilmUser.username == form_data.username)
-    current_user = session.exec(statement).first()
+    """
+        This is the login endpoint where the user can login and receive a state/authentication token
+    
+        Parameters:
+            session (SessionDep): this is the database session
+            form_data (OAuth2PasswordRequestForm): this is the formdata from the frontend form
 
-    if current_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
+        Returns:
+            str: the jwt token that represents the new state after edits
+    """
+    try:
+        statement = select(FilmUser).where(
+            FilmUser.username == form_data.username)
+        current_user = session.exec(statement).first()
 
-    if not settings.pwd_context.verify(form_data.password, current_user.password):
-        raise HTTPException(status_code=404, detail="Wrong Password")
+        if current_user is None:
+            raise HTTPException(status_code=404, detail="User not found")
 
-    return create_jwt_token(TokenModel.model_validate(current_user).model_dump())
+        if not settings.pwd_context.verify(form_data.password, current_user.password):
+            raise HTTPException(status_code=404, detail="Wrong Password")
+
+        return create_jwt_token(TokenModel.model_validate(current_user).model_dump())
+
+    # Catch errors
+    except JWTError:
+        raise HTTPException(
+            status_code=401,  # Unauthorized
+            detail=f"Invalid JWT token: {str(JWTError)}"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,  # Internal server error
+            detail=f"Login failed: {str(e)}"
+        )
 
 
 @app.post("/addprofile")
-async def add_profile(displayname: Annotated[str, Form()], session: SessionDep, current_filmuser: Annotated[int, Depends(get_current_filmuser)]) -> str:
-    current_user = session.get(FilmUser, current_filmuser)
-    current_user.profiles.append(Profile(displayname=displayname))
+async def add_profile(displayname: Annotated[str, Form()], session: SessionDep, current_filmuser: UserDep) -> str:
+    """
+        This is the add profile endpoint that allows users to add a profile
 
-    session.add(current_user)
-    session.commit()
-    session.refresh(current_user)
+        Parameters:
+            displayname Annotated[str, Form()]: the displayname of the profile to add
+            session SessionDep: this is the database session
+            current_filmuser Annotated[int, Depends(get_current_filmuser)]: the profile currently making the request
+        
+        Returns:    
+            str: the jwt token that represents the new state after edits
+    """
+    try:
+        current_user = session.get(FilmUser, current_filmuser)
+        current_user.profiles.append(Profile(displayname=displayname))
 
-    return create_jwt_token(TokenModel.model_validate(current_user).model_dump())
+        session.add(current_user)
+        session.commit()
+        session.refresh(current_user)
+
+        return create_jwt_token(TokenModel.model_validate(current_user).model_dump())
+
+    # Catch errors
+    except JWTError:
+        raise HTTPException(
+            status_code=401,  # Unauthorized
+            detail=f"Invalid JWT token: {str(JWTError)}"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,  # Internal server error
+            detail=f"AddProfile failed: {str(e)}"
+        )
 
 
 @app.post("/editprofile")
-async def edit_profile(displayname: Annotated[str, Form()], newdisplayname: Annotated[str, Form()], session: SessionDep, current_filmuser: Annotated[int, Depends(get_current_filmuser)]) -> str:
-    current_user = session.get(FilmUser, current_filmuser)
+async def edit_profile(displayname: Annotated[str, Form()], newdisplayname: Annotated[str, Form()], session: SessionDep, current_filmuser: UserDep) -> str:
+    """
+        This is the endpoint where the user can edit a profile
 
-    # change the display name
-    for profile in current_user.profiles:
-        if profile.displayname == displayname:
-            profile.displayname = newdisplayname
-            break
+        Parameters: 
+            displayname (Annotated[str, Form()]): the displayname of the profile to change
+            newdisplayname (Annotated[str, Form()]): the displayname to change the profile to
+            session (SessionDep): this is the database session
+            current_filmuser (Annotated[int, Depends(get_current_filmuser)]): the current user making the request
 
-    session.add(current_user)
-    session.commit()
-    session.refresh(current_user)
+        Returns:    
+            str: the jwt token that represents the new state after edits
+    """
+    try:
+        current_user = session.get(FilmUser, current_filmuser)
 
-    return create_jwt_token(TokenModel.model_validate(current_user).model_dump())
+        # change the display name
+        for profile in current_user.profiles:
+            if profile.displayname == displayname:
+                profile.displayname = newdisplayname
+                break
+
+        session.add(current_user)
+        session.commit()
+        session.refresh(current_user)
+
+        return create_jwt_token(TokenModel.model_validate(current_user).model_dump())
+
+    # Catch errors
+    except JWTError:
+        raise HTTPException(
+            status_code=401,  # Unauthorized
+            detail=f"Invalid JWT token: {str(JWTError)}"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,  # Internal server error
+            detail=f"Edit Profile failed: {str(e)}"
+        )
 
 
 @app.post("/watchlater/{profile_id}/{film_id}")
 async def add_watch_later(profile_id: str, film_id: str, session: SessionDep, current_filmuser: UserDep) -> str:
-    current_user = session.get(FilmUser, current_filmuser)
-    print(f"Got profile_id: {profile_id}")
-    print(f"Got film_id: {film_id}")
+    """
+        This is the endpoint that allows the user to add a film to watch later
 
-    # get the profile inside the session
-    for profile in current_user.profiles:
-        if profile.id == int(profile_id):
-            profile.watch_later.append(WatchLater(profileid=int(profile_id), film_id=int(film_id)))
-            break
+        Parameters:
+            profile_id (str): the id of the profile to add the watch later to
+            film_id (str): the id of the film to add to the watch later
+            session (SessionDep): this is the database session
+            current_filmuser (UserDep): the current user 
 
-    session.add(current_user)
-    session.commit()
-    session.refresh(current_user)
+        Returns:    
+            str: the jwt token that represents the new state after edits
+    """
+    try:
+        current_user = session.get(FilmUser, current_filmuser)
+        print(f"Got profile_id: {profile_id}")
+        print(f"Got film_id: {film_id}")
 
-    return create_jwt_token(TokenModel.model_validate(current_user).model_dump())
+        # get the profile inside the session
+        for profile in current_user.profiles:
+            if profile.id == int(profile_id):
+                profile.watch_later.append(WatchLater(
+                    profileid=int(profile_id), film_id=int(film_id)))
+                break
+
+        session.add(current_user)
+        session.commit()
+        session.refresh(current_user)
+
+        return create_jwt_token(TokenModel.model_validate(current_user).model_dump())
+
+    # Catch errors
+    except JWTError:
+        raise HTTPException(
+            status_code=401,  # Unauthorized
+            detail=f"Invalid JWT token: {str(JWTError)}"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,  # Internal server error
+            detail=f"Add Watch Later failed: {str(e)}"
+        )
 
 
 @app.post("/favorite/{profile_id}/{film_id}")
-async def add_favorite(profile_id: int, film_id: int, session: SessionDep, current_filmuser: UserDep):
-    current_user = session.get(FilmUser, current_filmuser)
-    print(f"Got profile_id: {profile_id}")
-    print(f"Got film_id: {film_id}")
+async def add_favorite(profile_id: str, film_id: str, session: SessionDep, current_filmuser: UserDep) -> str:
+    """
+        This is the endpoint that allows a user to add a favorite film
 
-    # get the profile inside the session
-    for profile in current_user.profiles:
-        if profile.id == int(profile_id):
-            profile.favorites.append(Favorite(profileid=int(profile_id), film_id=int(film_id)))
-            break
+        Parameters:
+            profile_id (str): the id of the profile to add the watch later to
+            film_id (str): the id of the film to add to the watch later
+            session (SessionDep): this is the database session
+            current_filmuser (UserDep): the current user 
+        
+        Returns:    
+            str: the jwt token that represents the new state after edits
+    """
+    try:
+        current_user = session.get(FilmUser, current_filmuser)
+        print(f"Got profile_id: {profile_id}")
+        print(f"Got film_id: {film_id}")
 
-    session.add(current_user)
-    session.commit()
-    session.refresh(current_user)
+        # get the profile inside the session
+        for profile in current_user.profiles:
+            if profile.id == int(profile_id):
+                profile.favorites.append(
+                    Favorite(profileid=int(profile_id), film_id=int(film_id)))
+                break
 
-    return create_jwt_token(TokenModel.model_validate(current_user).model_dump())
+        session.add(current_user)
+        session.commit()
+        session.refresh(current_user)
 
+        return create_jwt_token(TokenModel.model_validate(current_user).model_dump())
+
+    # Catch errors
+    except JWTError:
+        raise HTTPException(
+            status_code=401,  # Unauthorized
+            detail=f"Invalid JWT token: {str(JWTError)}"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,  # Internal server error
+            detail=f"Add Favorite failed: {str(e)}"
+        )
+
+
+@app.post("/add_watchhistory/{profile_id}/{film_id}")
+async def add_watchhistory(profile_id: str, film_id: str, session: SessionDep, current_filmuser: UserDep) -> str:
+    """
+        This is the endpoint that allows a user to add a film to the their watch history
+
+        Parameters:
+            profile_id (str): the id of the profile to add the watch history to
+            film_id (str): the id of the film to add to the watch history 
+            session (SessionDep): this is the database session
+            current_filmuser (UserDep): the current user 
+        
+        Returns:    
+            str: the jwt token that represents the new state after edits
+    """
+    try:
+        current_user = session.get(FilmUser, current_filmuser)
+
+        # get the profile inside the session
+        for profile in current_user.profiles:
+            if profile.id == int(profile_id):
+                profile.watch_history.append(
+                    WatchHistory(profileid=int(profile_id), film_id=int(film_id)))
+                break
+
+        session.add(current_user)
+        session.commit()
+        session.refresh(current_user)
+
+        return create_jwt_token(TokenModel.model_validate(current_user).model_dump())
+
+    # Catch errors
+    except JWTError:
+        raise HTTPException(
+            status_code=401,  # Unauthorized
+            detail=f"Invalid JWT token: {str(JWTError)}"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,  # Internal server error
+            detail=f"Add Favorite failed: {str(e)}"
+        )
+
+
+@app.post("/search/{profile_id}/{query}")
+async def search(profile_id: str, query: str, session: SessionDep, current_filmuser: UserDep):
+    try:
+        current_user = session.get(FilmUser, current_filmuser)
+
+        # get the films for the search
+
+        # go through the films and search them using in
+
+        # add to the result with the in
+
+        # add t
+
+        # get the profile inside the session
+        for profile in current_user.profiles:
+            if profile.id == int(profile_id):
+                # profile.watch_history.append(
+                    # WatchHistory(profileid=int(profile_id), film_id=int(film_id)))
+                break
+    # Catch errors
+    except JWTError:
+        raise HTTPException(
+            status_code=401,  # Unauthorized
+            detail=f"Invalid JWT token: {str(JWTError)}"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,  # Internal server error
+            detail=f"Add Favorite failed: {str(e)}"
+        )
 
 @app.get("/getfilms")
 async def get_film_list(session: SessionDep) -> list[FilmToken]:
-    statement = select(Film)
-    result = session.exec(statement).all()
+    """
+        This is the endpoint that allows a user to get the list of films to stream
 
-    return result
+        Parameters:
+            session: SessionDep
+
+        Returns:    
+            str: the jwt token that represents the new state after edits
+    """
+    try:
+        statement = select(Film)
+        result = session.exec(statement).all()
+
+        return result
+
+    # Catch errors
+    except JWTError:
+        raise HTTPException(
+            status_code=401,  # Unauthorized
+            detail=f"Invalid JWT token: {str(JWTError)}"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,  # Internal server error
+            detail=f"Get Films failed: {str(e)}"
+        )
 
 
 @app.get("/film/{film_name}")
 async def stream_film(film_name: str, range: str = Header(None)):
+    """
+        This is the endpoint that allows a user to stream a film
+
+        Parameters:
+            film_name (str): the name of the film to stream
+            range (str): the range of the film file to request
+
+        Returns:    
+            str: the jwt token that represents the new state after edits
+    """
     try:
         start, end = range.replace("bytes=", "").split("-")
         start = int(start)
@@ -249,14 +508,22 @@ async def stream_film(film_name: str, range: str = Header(None)):
             }
 
             return Response(data, status_code=206, headers=headers, media_type="video/mp4")
-    except Exception as e:
-        if isinstance(e, HTTPException):
-            raise e
+
+    except HTTPException:
         raise HTTPException(status_code=400, detail="Invalid film request")
 
 
 @app.get("/images/{image_name}")
 async def get_image(image_name: str):
+    """
+        This is the endpoint that allows a user to fetch an image 
+
+        Parameters:
+            image_name (str): the name of the image to fetch
+
+        Returns:    
+            str: the jwt token that represents the new state after edits
+    """
     try:
         # Construct the intended path
         image_path = (settings.images_dir / f"{image_name}").resolve()
@@ -283,7 +550,6 @@ async def get_image(image_name: str):
             # Determine media type from extension
             media_type=f"image/{image_path.suffix.lstrip('.')}"
         )
-    except Exception as e:
-        if isinstance(e, HTTPException):
-            raise e
+
+    except Exception:
         raise HTTPException(status_code=400, detail="Invalid image request")
