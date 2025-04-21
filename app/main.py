@@ -369,6 +369,7 @@ async def add_favorite(profile_id: str, film_id: str, session: SessionDep, curre
             detail=f"Add Favorite failed: {str(e)}"
         )
 
+
 @app.get("/add_watchhistory/{profile_id}/{film_id}")
 async def add_watchhistory(profile_id: str, film_id: str, session: SessionDep, current_filmuser: UserDep) -> str:
     """
