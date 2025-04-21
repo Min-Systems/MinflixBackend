@@ -141,6 +141,7 @@ async def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm
             date_registered=datetime.datetime.now(),
             profiles=[],
             watch_later=[],
+            watch_history=[],
             favorites=[]
         )
 
@@ -348,6 +349,48 @@ async def add_favorite(profile_id: str, film_id: str, session: SessionDep, curre
             if profile.id == int(profile_id):
                 profile.favorites.append(
                     Favorite(profileid=int(profile_id), film_id=int(film_id)))
+                break
+
+        session.add(current_user)
+        session.commit()
+        session.refresh(current_user)
+
+        return create_jwt_token(TokenModel.model_validate(current_user).model_dump())
+
+    # Catch errors
+    except JWTError:
+        raise HTTPException(
+            status_code=401,  # Unauthorized
+            detail=f"Invalid JWT token: {str(JWTError)}"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,  # Internal server error
+            detail=f"Add Favorite failed: {str(e)}"
+        )
+
+@app.get("/add_watchhistory/{profile_id}/{film_id}")
+async def add_watchhistory(profile_id: str, film_id: str, session: SessionDep, current_filmuser: UserDep) -> str:
+    """
+        This is the endpoint that allows a user to add a film to the their watch history
+
+        Parameters:
+            profile_id (str): the id of the profile to add the watch history to
+            film_id (str): the id of the film to add to the watch history 
+            session (SessionDep): this is the database session
+            current_filmuser (UserDep): the current user 
+        
+        Returns:    
+            str: the jwt token that represents the new state after edits
+    """
+    try:
+        current_user = session.get(FilmUser, current_filmuser)
+
+        # get the profile inside the session
+        for profile in current_user.profiles:
+            if profile.id == int(profile_id):
+                profile.watch_history.append(
+                    WatchHistory(profileid=int(profile_id), film_id=int(film_id)))
                 break
 
         session.add(current_user)
