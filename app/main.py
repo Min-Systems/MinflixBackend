@@ -413,6 +413,37 @@ async def add_watchhistory(profile_id: str, film_id: str, session: SessionDep, c
         )
 
 
+@app.post("/search/{profile_id}/{query}")
+async def search(profile_id: str, query: str, session: SessionDep, current_filmuser: UserDep):
+    try:
+        current_user = session.get(FilmUser, current_filmuser)
+
+        # get the films for the search
+
+        # go through the films and search them using in
+
+        # add to the result with the in
+
+        # add t
+
+        # get the profile inside the session
+        for profile in current_user.profiles:
+            if profile.id == int(profile_id):
+                # profile.watch_history.append(
+                    # WatchHistory(profileid=int(profile_id), film_id=int(film_id)))
+                break
+    # Catch errors
+    except JWTError:
+        raise HTTPException(
+            status_code=401,  # Unauthorized
+            detail=f"Invalid JWT token: {str(JWTError)}"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,  # Internal server error
+            detail=f"Add Favorite failed: {str(e)}"
+        )
+
 @app.get("/getfilms")
 async def get_film_list(session: SessionDep) -> list[FilmToken]:
     """
