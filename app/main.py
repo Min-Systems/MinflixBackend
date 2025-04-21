@@ -551,19 +551,14 @@ async def get_recommendations(profile_id: str, session: SessionDep, current_film
         films_list = session.exec(statement).all()
         films_dict = {film.id: film for film in films_list}
 
-        # Get the movie titles from profile watch history
-        watched_titles = [
-            films_dict[wh.film_id].title
-            for wh in selected_profile.watch_history
-            if wh.film_id in films_dict
-        ]
+        # Get the last watched film title from profile watch history
+        last_watched = selected_profile.watch_history[-1]
+        watched_title = films_dict[last_watched.film_id].title
 
         # Get recommended movies using the recommend function
-        recommended_titles = recommend(watched_titles)
+        recommended_titles = recommend(watched_title)
         # Map recommended movies to Film objects
-        recommended_films = [
-            film for film in films_list if film.title in recommended_titles
-        ]
+        recommended_films = [film for film in films_list if film.title in recommended_titles]
 
         return recommended_films
     

@@ -2,7 +2,7 @@
 from ..models.film_models import *
 FILMS = [
     Film(
-        title="Assignment: Outer space",
+        title="Assignment: Outer Space",
         length=1,
         image_name="Assignment_Outer_Space.jpg",
         file_name="Assignment_Outer_Space.mp4",
@@ -11,7 +11,7 @@ FILMS = [
         production_team=[]
     ),
     Film(
-        title="Brain From Planet Arous",
+        title="The Brain From Planet Arous",
         length=1,
         image_name="Brain_from_Planet_Arous.jpg",
         file_name="Brain_from_Planet_Arous.mp4",
@@ -47,7 +47,7 @@ FILMS = [
         production_team=[]
     ),
     Film(
-        title="Preview of The First 100 Years",
+        title="The First 100 Years",
         length=1,
         image_name="Preview-TheFirst100Years.jpg",
         file_name="Preview-TheFirst100Years.mp4",
@@ -56,7 +56,7 @@ FILMS = [
         production_team=[]
     ),
     Film(
-        title="Sinking of the Lusitania",
+        title="The Sinking of the Lusitania",
         length=1,
         image_name="SinkingOfTheLusitania.jpg",
         file_name="SinkingOfTheLusitania.mp4",
@@ -65,7 +65,7 @@ FILMS = [
         production_team=[]
     ),
     Film(
-        title="The Spirit of 43",
+        title="The Spirit of '43",
         length=1,
         image_name="The_Spirit_of__43.jpg",
         file_name="The_Spirit_of__43.mp4",
