@@ -29,6 +29,7 @@ class TokenProfileDataModel(BaseModel):
     id: int
     displayname: str
     watch_later: List["TokenWatchLaterDataModel"]
+    watch_history: List["TokenWatchHistoryDataModel"]
     favorites: List["TokenFavoriteDataModel"]
     model_config = ConfigDict(from_attributes=True)
 
@@ -47,6 +48,19 @@ class TokenWatchLaterDataModel(BaseModel):
 
 
 class TokenFavoriteDataModel(BaseModel):
+    """
+        This is the part of the token which represents the favorites
+
+        Attributes:
+            id (int): the id of the watch later
+            film_id (int): the id of the favorite film
+    """
+    id: int
+    film_id: int
+    model_config = ConfigDict(from_attributes=True)
+
+
+class TokenWatchHistoryDataModel(BaseModel):
     """
         This is the part of the token which represents the favorites
 

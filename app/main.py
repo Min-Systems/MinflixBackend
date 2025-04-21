@@ -370,7 +370,7 @@ async def add_favorite(profile_id: str, film_id: str, session: SessionDep, curre
         )
 
 
-@app.get("/add_watchhistory/{profile_id}/{film_id}")
+@app.post("/add_watchhistory/{profile_id}/{film_id}")
 async def add_watchhistory(profile_id: str, film_id: str, session: SessionDep, current_filmuser: UserDep) -> str:
     """
         This is the endpoint that allows a user to add a film to the their watch history
