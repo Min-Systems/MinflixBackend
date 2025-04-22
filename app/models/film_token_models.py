@@ -1,5 +1,4 @@
-from typing import List
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 from .film_models import *
 
 
