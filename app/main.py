@@ -12,7 +12,7 @@ from .core.db import *
 from .core.jwt import *
 from .core.db import *
 from .core.log import *
-from .core.recommender import recommend
+from .recommender.recommender import *
 from .core.config import Settings
 from .data.film_data import *
 from .data.example_data import *

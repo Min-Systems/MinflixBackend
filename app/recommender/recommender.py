@@ -2,8 +2,8 @@ import pickle
 import json
 import joblib
 
-movies = pickle.load(open('../recommender/artifacts/movie_list.pkl', 'rb'))
-similarity = joblib.load('../recommender/artifacts/similarity.pkl')
+movies = pickle.load(open('./recommender/artifacts/movie_list.pkl', 'rb'))
+similarity = joblib.load('./recommender/artifacts/similarity.pkl')
 
 movie_list = movies['title'].values
 
