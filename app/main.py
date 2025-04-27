@@ -12,6 +12,7 @@ from .core.db import *
 from .core.jwt import *
 from .core.db import *
 from .core.log import *
+from .recommender.recommender import *
 from .core.config import Settings
 from .data.film_data import *
 from .data.example_data import *
@@ -580,3 +581,47 @@ async def get_image(image_name: str):
 
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid image request")
+
+@app.get("/recommendations/{profile_id}")
+async def get_recommendations(profile_id: str, session: SessionDep, current_filmuser: UserDep):
+    """
+        This is the endpoint that shows the recommended films for a profile based on wathch history.
+
+        Parameters:
+            profile_id (str): the id of the profile to fetch the watch history
+            session (SessionDep): this is the database session
+            current_filmuser (UserDep): the current user
+        
+        Returns:
+            list: the list of recommended films basded on watch history of the current profile
+    """
+    try:
+        current_user = session.get(FilmUser, current_filmuser)
+
+        selected_profile = None
+        for profile in current_user.profiles:
+            if profile.id == int(profile_id):
+                selected_profile = profile
+                break
+        
+        # Load all films
+        statement = select(Film)
+        films_list = session.exec(statement).all()
+        films_dict = {film.id: film for film in films_list}
+
+        # Get the last watched film title from profile watch history
+        last_watched = selected_profile.watch_history[-1]
+        watched_title = films_dict[last_watched.film_id].title
+
+        # Get recommended movies using the recommend function
+        recommended_titles = recommend(watched_title)
+        # Map recommended movies to Film objects
+        recommended_films = [film for film in films_list if film.title in recommended_titles]
+
+        return recommended_films
+    
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,  # Internal server error
+            detail=f"Recommend Films failed: {str(e)}"
+        )
