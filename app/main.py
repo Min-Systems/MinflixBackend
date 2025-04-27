@@ -19,6 +19,7 @@ from .models.film_models import *
 from .models.film_token_models import *
 from .models.token_models import *
 from .models.user_models import *
+from .models.search_models import *
 
 settings = Settings()
 
@@ -142,6 +143,7 @@ async def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm
             profiles=[],
             watch_later=[],
             watch_history=[],
+            search_history=[],
             favorites=[]
         )
 
@@ -168,7 +170,7 @@ async def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm
 async def login(session: SessionDep, form_data: OAuth2PasswordRequestForm = Depends()) -> str:
     """
         This is the login endpoint where the user can login and receive a state/authentication token
-    
+
         Parameters:
             session (SessionDep): this is the database session
             form_data (OAuth2PasswordRequestForm): this is the formdata from the frontend form
@@ -211,7 +213,7 @@ async def add_profile(displayname: Annotated[str, Form()], session: SessionDep, 
             displayname Annotated[str, Form()]: the displayname of the profile to add
             session SessionDep: this is the database session
             current_filmuser Annotated[int, Depends(get_current_filmuser)]: the profile currently making the request
-        
+
         Returns:    
             str: the jwt token that represents the new state after edits
     """
@@ -335,7 +337,7 @@ async def add_favorite(profile_id: str, film_id: str, session: SessionDep, curre
             film_id (str): the id of the film to add to the watch later
             session (SessionDep): this is the database session
             current_filmuser (UserDep): the current user 
-        
+
         Returns:    
             str: the jwt token that represents the new state after edits
     """
@@ -380,7 +382,7 @@ async def add_watchhistory(profile_id: str, film_id: str, session: SessionDep, c
             film_id (str): the id of the film to add to the watch history 
             session (SessionDep): this is the database session
             current_filmuser (UserDep): the current user 
-        
+
         Returns:    
             str: the jwt token that represents the new state after edits
     """
@@ -413,25 +415,49 @@ async def add_watchhistory(profile_id: str, film_id: str, session: SessionDep, c
         )
 
 
-@app.post("/search/{profile_id}/{query}")
-async def search(profile_id: str, query: str, session: SessionDep, current_filmuser: UserDep):
+@app.post("/search")
+async def search(profile_id: Annotated[str, Form()], query: Annotated[str, Form()], session: SessionDep, current_filmuser: UserDep) -> SearchResponseModel:
     try:
         current_user = session.get(FilmUser, current_filmuser)
+        result = []
+        print(f"[INFO]: got query as: {query}")
+        print(f"[INFO]: got profile_id: {profile_id}")
 
         # get the films for the search
+        statement_film = select(Film)
+        films = session.exec(statement_film).all()
 
         # go through the films and search them using in
-
-        # add to the result with the in
-
-        # add t
+        for film in films:
+            # add to the result with the in
+            if query in film.title:
+                result.append(film.id)
 
         # get the profile inside the session
         for profile in current_user.profiles:
+            # add to the profile
             if profile.id == int(profile_id):
-                # profile.watch_history.append(
-                    # WatchHistory(profileid=int(profile_id), film_id=int(film_id)))
+                profile.search_history.append(
+                    SearchHistory(profileid=int(profile_id), search_query=query))
                 break
+
+        if len(profile.search_history) > 3:
+            # remove the search from the profile object
+            oldest_search_history = profile.search_history[0]
+            profile.search_history.remove(oldest_search_history)
+            # remove the search from the database
+            session.delete(oldest_search_history)
+
+        session.add(current_user)
+        session.commit()
+        session.refresh(current_user)
+
+        token = create_jwt_token(
+            TokenModel.model_validate(current_user).model_dump())
+        search_reponse = SearchResponseModel(results=result, token=token)
+
+        return search_reponse
+
     # Catch errors
     except JWTError:
         raise HTTPException(
@@ -441,8 +467,9 @@ async def search(profile_id: str, query: str, session: SessionDep, current_filmu
     except Exception as e:
         raise HTTPException(
             status_code=500,  # Internal server error
-            detail=f"Add Favorite failed: {str(e)}"
+            detail=f"Search failed: {str(e)}"
         )
+
 
 @app.get("/getfilms")
 async def get_film_list(session: SessionDep) -> list[FilmToken]:
