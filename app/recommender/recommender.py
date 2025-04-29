@@ -8,15 +8,28 @@ from pathlib import Path
 
 settings = Settings()
 
-if settings.recommmender_file_directory == "":
+if settings.recommender_file_directory == "":
     # get the base directory of the application
     base_dir = Path(__file__).parent.absolute()
-    # make the paths
-    movie_list_path = base_dir  / "recommender" / "artifacts" / "movie_list.pkl"
-    similarity_path = base_dir  / "recommender" / "artifacts" / "similarity.pkl"
+    print(f"Base directory: {base_dir}")
+    
+    # Remove the doubled directory path - use only "artifacts" directly
+    # movie_list_path = base_dir / "artifacts" / "movie_list.pkl"
+    # similarity_path = base_dir / "artifacts" / "similarity.pkl"
+
+    movie_list_path = "/app/recommender/artifacts/movie_list.pkl"
+    similarity_path = "/app/recommender/artifacts/similarity.pkl"
+    
+    # Alternative approach - go up one directory if needed
+    # movie_list_path = base_dir.parent / "artifacts" / "movie_list.pkl"
+    # similarity_path = base_dir.parent / "artifacts" / "similarity.pkl"
+    
+    print(f"Looking for movie list at: {movie_list_path}")
+    print(f"Looking for similarity at: {similarity_path}")
+
 else:
-   movie_list_path = settings.recommender_file_path / "movie_list.pkl" 
-   similarity_path = settings.recommender_file_path / "similarity.pkl"
+   movie_list_path = Path(settings.recommender_file_directory) / "artifacts" / "movie_list.pkl" 
+   similarity_path = Path(settings.recommender_file_directory) / "artifacts" /"similarity.pkl"
 
 # open the files
 movies = pickle.load(open(movie_list_path, 'rb'))
