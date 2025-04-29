@@ -15,8 +15,8 @@ if settings.recommmender_file_directory == "":
     movie_list_path = base_dir  / "recommender" / "artifacts" / "movie_list.pkl"
     similarity_path = base_dir  / "recommender" / "artifacts" / "similarity.pkl"
 else:
-   movie_list_path = settings.recommender_dir / "movie_list.pkl" 
-   similarity_path = settings.recommender_dir / "similarity.pkl"
+   movie_list_path = settings.recommender_file_path / "movie_list.pkl" 
+   similarity_path = settings.recommender_file_path / "similarity.pkl"
 
 # open the files
 movies = pickle.load(open(movie_list_path, 'rb'))
