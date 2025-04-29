@@ -12,8 +12,8 @@ if settings.recommmender_file_directory == "":
     # get the base directory of the application
     base_dir = Path(__file__).parent.absolute()
     # make the paths
-    movie_list_path = base_dir / "app" / "recommender" / "artifacts" / "movie_list.pkl"
-    similarity_path = base_dir / "app" / "recommender" / "artifacts" / "similarity.pkl"
+    movie_list_path = base_dir  / "recommender" / "artifacts" / "movie_list.pkl"
+    similarity_path = base_dir  / "recommender" / "artifacts" / "similarity.pkl"
 else:
    movie_list_path = settings.recommender_dir / "movie_list.pkl" 
    similarity_path = settings.recommender_dir / "similarity.pkl"
