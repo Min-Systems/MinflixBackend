@@ -299,8 +299,6 @@ async def add_watch_later(profile_id: str, film_id: str, session: SessionDep, cu
     """
     try:
         current_user = session.get(FilmUser, current_filmuser)
-        print(f"Got profile_id: {profile_id}")
-        print(f"Got film_id: {film_id}")
 
         # get the profile inside the session
         for profile in current_user.profiles:
@@ -344,8 +342,6 @@ async def add_favorite(profile_id: str, film_id: str, session: SessionDep, curre
     """
     try:
         current_user = session.get(FilmUser, current_filmuser)
-        print(f"Got profile_id: {profile_id}")
-        print(f"Got film_id: {film_id}")
 
         # get the profile inside the session
         for profile in current_user.profiles:
@@ -418,11 +414,11 @@ async def add_watchhistory(profile_id: str, film_id: str, session: SessionDep, c
 
 @app.post("/search")
 async def search(profile_id: Annotated[str, Form()], query: Annotated[str, Form()], session: SessionDep, current_filmuser: UserDep) -> SearchResponseModel:
+    """
+    """
     try:
         current_user = session.get(FilmUser, current_filmuser)
         result = []
-        print(f"[INFO]: got query as: {query}")
-        print(f"[INFO]: got profile_id: {profile_id}")
 
         # get the films for the search
         statement_film = select(Film)
@@ -522,7 +518,6 @@ async def stream_film(film_name: str, range: str = Header(None)):
         # current_film = static_media_directory + "/EvilBrainFromOuterSpace_512kb.mp4"
         current_film = f"{settings.static_media_directory}/films/{film_name}"
         logging.info(f"[INFO]: got the file as: {current_film}")
-        print(f"[INFO]: got the file as: {current_film}")
         current_film = Path(current_film)
 
         with open(current_film, "rb") as video:
@@ -582,6 +577,7 @@ async def get_image(image_name: str):
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid image request")
 
+
 @app.get("/recommendations/{profile_id}")
 async def get_recommendations(profile_id: str, session: SessionDep, current_filmuser: UserDep):
     """
@@ -591,7 +587,7 @@ async def get_recommendations(profile_id: str, session: SessionDep, current_film
             profile_id (str): the id of the profile to fetch the watch history
             session (SessionDep): this is the database session
             current_filmuser (UserDep): the current user
-        
+
         Returns:
             list: the list of recommended films basded on watch history of the current profile
     """
@@ -603,7 +599,7 @@ async def get_recommendations(profile_id: str, session: SessionDep, current_film
             if profile.id == int(profile_id):
                 selected_profile = profile
                 break
-        
+
         # Load all films
         statement = select(Film)
         films_list = session.exec(statement).all()
@@ -616,10 +612,11 @@ async def get_recommendations(profile_id: str, session: SessionDep, current_film
         # Get recommended movies using the recommend function
         recommended_titles = recommend(watched_title)
         # Map recommended movies to Film objects
-        recommended_films = [film for film in films_list if film.title in recommended_titles]
+        recommended_films = [
+            film for film in films_list if film.title in recommended_titles]
 
         return recommended_films
-    
+
     except Exception as e:
         raise HTTPException(
             status_code=500,  # Internal server error
