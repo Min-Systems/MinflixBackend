@@ -220,6 +220,9 @@ async def add_profile(displayname: Annotated[str, Form()], session: SessionDep, 
     """
     try:
         current_user = session.get(FilmUser, current_filmuser)
+
+        if len(current_user.profiles) >= 5:
+            raise HTTPException(status_code=404, detail="Max profiles reached")
         current_user.profiles.append(Profile(displayname=displayname))
 
         session.add(current_user)
@@ -415,6 +418,16 @@ async def add_watchhistory(profile_id: str, film_id: str, session: SessionDep, c
 @app.post("/search")
 async def search(profile_id: Annotated[str, Form()], query: Annotated[str, Form()], session: SessionDep, current_filmuser: UserDep) -> SearchResponseModel:
     """
+        This is the endpoint that allows the user to search for films
+
+        Parameters:
+            profile_id (Annotated[str, Form()]):
+            query (Annotated[str, Form()]):
+            session (SessionDep):
+            current_filmuser (UserDep):
+
+        Returns:
+            search_response: a search_response object with the token and list of film ids from the search
     """
     try:
         current_user = session.get(FilmUser, current_filmuser)
