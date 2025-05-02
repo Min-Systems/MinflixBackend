@@ -37,6 +37,6 @@ class Settings(BaseSettings):
     images_dir: Path = Path(f"{static_media_directory}/images")
     films_dir: Path = Path(f"{static_media_directory}/films")
     recommender_dir: Path = Path(f"{recommender_file_directory}/artifacts")
-    chunk_size: int = 1024*1024
+    chunk_size: int = 64*1024
     oauth2_scheme: OAuth2PasswordBearer = OAuth2PasswordBearer(tokenUrl="login")
     pwd_context: CryptContext = CryptContext(schemes=["bcrypt"], deprecated="auto")
