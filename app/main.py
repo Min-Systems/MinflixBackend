@@ -93,7 +93,7 @@ async def root():
     logging.info(f"[INFO]: got root route")
     return {
         "message": "MinFlix API is running",
-        "version": "6.0",
+        "version": "8.0",
         "environment": "production",
         "endpoints": [
             "/login",
@@ -103,9 +103,11 @@ async def root():
             "/watchlater",
             "/favorite",
             "/watchhistory",
+            "/search",
             "/getfilms",
             "/film",
-            "/images"
+            "/images",
+            "/recommendations"
         ]
     }
 
@@ -128,14 +130,12 @@ async def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm
         current_user = session.exec(statement).first()
 
         if current_user:
-            print(f"User found: {form_data.username}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="User already exists. Please login instead."
             )
 
         # Create new user
-        print(f"Creating new user: {form_data.username}")
         hashed_password = settings.pwd_context.hash(form_data.password)
         new_user = FilmUser(
             username=form_data.username,
@@ -220,6 +220,9 @@ async def add_profile(displayname: Annotated[str, Form()], session: SessionDep, 
     """
     try:
         current_user = session.get(FilmUser, current_filmuser)
+
+        if len(current_user.profiles) >= 5:
+            raise HTTPException(status_code=404, detail="Max profiles reached")
         current_user.profiles.append(Profile(displayname=displayname))
 
         session.add(current_user)
@@ -299,8 +302,6 @@ async def add_watch_later(profile_id: str, film_id: str, session: SessionDep, cu
     """
     try:
         current_user = session.get(FilmUser, current_filmuser)
-        print(f"Got profile_id: {profile_id}")
-        print(f"Got film_id: {film_id}")
 
         # get the profile inside the session
         for profile in current_user.profiles:
@@ -344,8 +345,6 @@ async def add_favorite(profile_id: str, film_id: str, session: SessionDep, curre
     """
     try:
         current_user = session.get(FilmUser, current_filmuser)
-        print(f"Got profile_id: {profile_id}")
-        print(f"Got film_id: {film_id}")
 
         # get the profile inside the session
         for profile in current_user.profiles:
@@ -418,11 +417,21 @@ async def add_watchhistory(profile_id: str, film_id: str, session: SessionDep, c
 
 @app.post("/search")
 async def search(profile_id: Annotated[str, Form()], query: Annotated[str, Form()], session: SessionDep, current_filmuser: UserDep) -> SearchResponseModel:
+    """
+        This is the endpoint that allows the user to search for films
+
+        Parameters:
+            profile_id (Annotated[str, Form()]):
+            query (Annotated[str, Form()]):
+            session (SessionDep):
+            current_filmuser (UserDep):
+
+        Returns:
+            search_response: a search_response object with the token and list of film ids from the search
+    """
     try:
         current_user = session.get(FilmUser, current_filmuser)
         result = []
-        print(f"[INFO]: got query as: {query}")
-        print(f"[INFO]: got profile_id: {profile_id}")
 
         # get the films for the search
         statement_film = select(Film)
@@ -521,12 +530,9 @@ async def stream_film(film_name: str, range: str = Header(None)):
 
         # current_film = static_media_directory + "/EvilBrainFromOuterSpace_512kb.mp4"
         current_film = f"{settings.static_media_directory}/films/{film_name}"
-        logging.info(f"[INFO]: got the file as: {current_film}")
-        print(f"[INFO]: got the file as: {current_film}")
         current_film = Path(current_film)
 
         with open(current_film, "rb") as video:
-            print(f"[INFO]: opened file")
             video.seek(start)
             data = video.read(end - start)
             filesize = str(current_film.stat().st_size)
@@ -582,6 +588,7 @@ async def get_image(image_name: str):
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid image request")
 
+
 @app.get("/recommendations/{profile_id}")
 async def get_recommendations(profile_id: str, session: SessionDep, current_filmuser: UserDep):
     """
@@ -591,7 +598,7 @@ async def get_recommendations(profile_id: str, session: SessionDep, current_film
             profile_id (str): the id of the profile to fetch the watch history
             session (SessionDep): this is the database session
             current_filmuser (UserDep): the current user
-        
+
         Returns:
             list: the list of recommended films basded on watch history of the current profile
     """
@@ -603,7 +610,7 @@ async def get_recommendations(profile_id: str, session: SessionDep, current_film
             if profile.id == int(profile_id):
                 selected_profile = profile
                 break
-        
+
         # Load all films
         statement = select(Film)
         films_list = session.exec(statement).all()
@@ -612,14 +619,14 @@ async def get_recommendations(profile_id: str, session: SessionDep, current_film
         # Get the last watched film title from profile watch history
         last_watched = selected_profile.watch_history[-1]
         watched_title = films_dict[last_watched.film_id].title
-
         # Get recommended movies using the recommend function
         recommended_titles = recommend(watched_title)
         # Map recommended movies to Film objects
-        recommended_films = [film for film in films_list if film.title in recommended_titles]
+        recommended_films = [
+            film for film in films_list if film.title in recommended_titles]
 
         return recommended_films
-    
+
     except Exception as e:
         raise HTTPException(
             status_code=500,  # Internal server error

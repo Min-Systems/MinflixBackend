@@ -39,7 +39,6 @@ def verify_jwt_token(token: str) -> dict:
     try:
         # The decode function also checks the expiration claim automatically
         payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
-        print(f"The payload: {payload}")
 
         return payload
 

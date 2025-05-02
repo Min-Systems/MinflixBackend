@@ -11,7 +11,7 @@ FILMS = [
         production_team=[]
     ),
     Film(
-        title="The Brain From Planet Arous",
+        title="Brain From Planet Arous",
         length=1,
         image_name="Brain_from_Planet_Arous.jpg",
         file_name="Brain_from_Planet_Arous.mp4",
