@@ -56,6 +56,9 @@ def create_example_data(session: SessionDep):
 def add_films(session: SessionDep):
     """
         Add film data to database
+
+        Parameters:
+            session (SessionDep): the database session
     """
     for film in FILMS:
         session.add(film)
