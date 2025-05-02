@@ -621,9 +621,10 @@ async def get_recommendations(profile_id: str, session: SessionDep, current_film
         # Get the last watched film title from profile watch history
         last_watched = selected_profile.watch_history[-1]
         watched_title = films_dict[last_watched.film_id].title
-
+        print(f"got watched title: {watched_title}")
         # Get recommended movies using the recommend function
         recommended_titles = recommend(watched_title)
+        print(f"got recommended {recommended_titles}")
         # Map recommended movies to Film objects
         recommended_films = [
             film for film in films_list if film.title in recommended_titles]
@@ -631,6 +632,7 @@ async def get_recommendations(profile_id: str, session: SessionDep, current_film
         return recommended_films
 
     except Exception as e:
+        print("backend problem")
         raise HTTPException(
             status_code=500,  # Internal server error
             detail=f"Recommend Films failed: {str(e)}"
