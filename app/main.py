@@ -93,7 +93,7 @@ async def root():
     logging.info(f"[INFO]: got root route")
     return {
         "message": "MinFlix API is running",
-        "version": "6.0",
+        "version": "8.0",
         "environment": "production",
         "endpoints": [
             "/login",
@@ -103,9 +103,11 @@ async def root():
             "/watchlater",
             "/favorite",
             "/watchhistory",
+            "/search",
             "/getfilms",
             "/film",
-            "/images"
+            "/images",
+            "/recommendations"
         ]
     }
 
