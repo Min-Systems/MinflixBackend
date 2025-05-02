@@ -52,12 +52,9 @@ def recommend(film_name, top_n=2):
     """
         Recommend a film using the matrix and cosine similarity function
     """
-    print(f"the film name {film_name}")
     film_index = film_names.index(film_name)
-    print(f"{film_name} not in the database")
     similarity_scores = similarity_matrix[film_index]
     similar_films = sorted(zip(film_names, similarity_scores),
                            key=lambda x: x[1], reverse=True)
     result = [film for film, score in similar_films[1:top_n+1]]
-    print(result)
     return result

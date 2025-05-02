@@ -128,14 +128,12 @@ async def registration(session: SessionDep, form_data: OAuth2PasswordRequestForm
         current_user = session.exec(statement).first()
 
         if current_user:
-            print(f"User found: {form_data.username}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="User already exists. Please login instead."
             )
 
         # Create new user
-        print(f"Creating new user: {form_data.username}")
         hashed_password = settings.pwd_context.hash(form_data.password)
         new_user = FilmUser(
             username=form_data.username,
@@ -530,11 +528,9 @@ async def stream_film(film_name: str, range: str = Header(None)):
 
         # current_film = static_media_directory + "/EvilBrainFromOuterSpace_512kb.mp4"
         current_film = f"{settings.static_media_directory}/films/{film_name}"
-        logging.info(f"[INFO]: got the file as: {current_film}")
         current_film = Path(current_film)
 
         with open(current_film, "rb") as video:
-            print(f"[INFO]: opened file")
             video.seek(start)
             data = video.read(end - start)
             filesize = str(current_film.stat().st_size)
@@ -621,10 +617,8 @@ async def get_recommendations(profile_id: str, session: SessionDep, current_film
         # Get the last watched film title from profile watch history
         last_watched = selected_profile.watch_history[-1]
         watched_title = films_dict[last_watched.film_id].title
-        print(f"got watched title: {watched_title}")
         # Get recommended movies using the recommend function
         recommended_titles = recommend(watched_title)
-        print(f"got recommended {recommended_titles}")
         # Map recommended movies to Film objects
         recommended_films = [
             film for film in films_list if film.title in recommended_titles]
@@ -632,7 +626,6 @@ async def get_recommendations(profile_id: str, session: SessionDep, current_film
         return recommended_films
 
     except Exception as e:
-        print("backend problem")
         raise HTTPException(
             status_code=500,  # Internal server error
             detail=f"Recommend Films failed: {str(e)}"
