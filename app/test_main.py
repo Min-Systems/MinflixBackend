@@ -8,7 +8,7 @@ def test_root_route():
     assert response.status_code == 200
     assert response.json() == {
         "message": "MinFlix API is running",
-        "version": "6.0",
+        "version": "8.0",
         "environment": "production",
         "endpoints": [
             "/login",
@@ -18,8 +18,10 @@ def test_root_route():
             "/watchlater",
             "/favorite",
             "/watchhistory",
+            "/search",
             "/getfilms",
             "/film",
-            "/images"
+            "/images",
+            "/recommendations",
         ]
     }
