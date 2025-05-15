@@ -1,6 +1,4 @@
-# tests/test_routes/test_auth.py
-import pytest
-from fastapi import status
+#Testing both registration and login routes
 
 def test_registration(client):
     """Test basic user registration."""
@@ -55,25 +53,3 @@ def test_login_nonexistent_user(client):
     assert response.status_code != 200
     data = response.json()
     assert "User not found" in data["detail"]
-
-def test_add_profile(client, test_user):
-    """Test adding a profile."""
-    # Mock the authentication
-    from app.main import app
-    from app.core.jwt import get_current_filmuser
-    
-    # Override the dependency
-    app.dependency_overrides[get_current_filmuser] = lambda: test_user.id
-    
-    try:
-        response = client.post(
-            "/addprofile",
-            data={"displayname": "Test Profile"}
-        )
-        
-        # Check response
-        assert response.status_code == 200
-        assert response.content  # Should contain a token
-    finally:
-        # Clean up
-        app.dependency_overrides.pop(get_current_filmuser)

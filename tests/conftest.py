@@ -65,7 +65,7 @@ def test_user(test_session):
 def test_film(test_session):
     """Create a test film in the database."""
     film = Film(
-        title="Test Film",
+        title="Evil Brain From Outer Space",  
         length=120,
         image_name="test.jpg",
         file_name="test.mp4",
