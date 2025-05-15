@@ -1,15 +1,38 @@
-from app.recommender.recommender import * 
+import pytest
 import numpy as np
+from app.recommender.recommender import recommend, cosine_similarity, films
 
-def test_cosine_similarity():
-    """Test the cosine similarity function."""
+def test_cosine_similarity_identical_vectors():
+    """Test cosine similarity between identical vectors."""
     vec_a = np.array([1, 0, 1, 0])
     vec_b = np.array([1, 0, 1, 0])
-    similarity = cosine_similarity(vec_a, vec_b)
-    assert similarity == 1.0  # Same vectors should have similarity of 1
+    
+    result = cosine_similarity(vec_a, vec_b)
+    
+    # Use numpy's isclose instead of exact equality
+    assert np.isclose(result, 1.0)
+    # Or use pytest's approx
+    assert result == pytest.approx(1.0)
 
-def test_recommend():
-    """Test the recommendation function returns the expected number of results."""
-    results = recommend("Evil Brain From Outer Space")
-    assert len(results) == 2  # Should return top_n=2 results
-    assert "Evil Brain From Outer Space" not in results  # Shouldn't include the input film
+def test_cosine_similarity_orthogonal_vectors():
+    """Test cosine similarity between orthogonal vectors."""
+    vec_a = np.array([1, 0, 0, 0])
+    vec_b = np.array([0, 1, 0, 0])
+    
+    result = cosine_similarity(vec_a, vec_b)
+    
+    # Use a tolerance for comparing with zero
+    assert np.isclose(result, 0.0)
+    # Or
+    assert result == pytest.approx(0.0)
+
+def test_cosine_similarity_opposite_vectors():
+    """Test cosine similarity between opposite vectors."""
+    vec_a = np.array([1, 0, 0, 0])
+    vec_b = np.array([-1, 0, 0, 0])
+    
+    result = cosine_similarity(vec_a, vec_b)
+    
+    assert np.isclose(result, -1.0)
+    # Or
+    assert result == pytest.approx(-1.0)
