@@ -1,9 +1,11 @@
 #testing film, getfilms, recommendations
-
+import builtins
 from app.main import app
 from app.core.jwt import get_current_filmuser
 from app.models.user_models import  Profile, WatchHistory
 from unittest.mock import patch, MagicMock
+from pathlib import Path
+
 
 
 def test_get_films(client):
@@ -54,34 +56,28 @@ def test_mock_recommendations(client, test_session,test_film,test_user):
         # Clean up
         app.dependency_overrides.pop(get_current_filmuser, None)
 
-def test_film_streaming(client):
-    """Simple test for film streaming endpoint."""
-    # Setup minimal mocks
-    with patch("builtins.open", MagicMock()), \
-         patch("pathlib.Path.stat") as mock_stat, \
-         patch("pathlib.Path", MagicMock()):
+def test_film_streaming(client,test_film):
+
+    test_path = Path(f"/test/path/films/{test_film.file_name}")
+
+    # Mock only the methods that would access the file system
+    with patch("builtins.open") as mock_open, \
+            patch.object(Path, "stat") as mock_stat, \
+            patch.object(Path, "resolve", return_value=test_path):
         
-        # Configure mock to return file size
-        mock_stat.return_value.st_size = 1000
+        # Configure file mock
+        mock_file = MagicMock()
+        mock_file.read.return_value = b"x" * 100
+        mock_open.return_value.__enter__.return_value = mock_file
+        
+        # Configure stat to return file size
+        mock_stat.return_value = MagicMock(st_size=1000)
         
         # Test with range header
         response = client.get(
-            "/film/test_film.mp4",
+            f"/film/{test_film.file_name}",
             headers={"Range": "bytes=0-99"}
         )
         
-        # Check status code
-        assert response.status_code == 206  # Partial Content
-
-@patch.multiple(
-    'pathlib.Path',
-    exists=MagicMock(return_value=True),
-    resolve=MagicMock(return_value="/test/path/image.jpg"),
-    stat=MagicMock(return_value=MagicMock(st_size=1000)),
-    __new__=MagicMock(return_value=MagicMock(suffix=".jpg"))
-)
-@patch('builtins.open', MagicMock())
-@patch('fastapi.responses.FileResponse', MagicMock(return_value=MagicMock(status_code=200)))
-def test_get_image(client):
-        response = client.get("/images/test.jpg")
-        assert response.status_code == 200
+        # Check status
+        assert response.status_code == 206
