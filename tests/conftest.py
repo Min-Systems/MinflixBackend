@@ -8,6 +8,7 @@ from app.main import app
 from app.core.db import get_session
 from app.models.user_models import FilmUser, Profile
 from app.models.film_models import Film
+from app.core.config import Settings
 
 # Override the dependency to use the test database
 @pytest.fixture(scope="session")
@@ -45,7 +46,6 @@ def client(test_session):
 @pytest.fixture
 def test_user(test_session):
     """Create a test user in the database."""
-    from app.core.config import Settings
     settings = Settings()
     
     user = FilmUser(

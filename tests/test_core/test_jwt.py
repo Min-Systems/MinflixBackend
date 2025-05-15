@@ -1,8 +1,9 @@
 import pytest
 from jose import jwt
 from datetime import datetime, timedelta
+from fastapi import HTTPException
 
-from app.core.jwt import create_jwt_token, verify_jwt_token
+from app.core.jwt import create_jwt_token, verify_jwt_token, get_current_filmuser
 from app.core.config import Settings
 
 @pytest.fixture
@@ -54,7 +55,6 @@ def test_verify_jwt_token(valid_token, jwt_test_data):
 
 def test_verify_invalid_token():
     """Test verification fails with invalid token."""
-    from fastapi import HTTPException
     
     with pytest.raises(HTTPException) as excinfo:
         verify_jwt_token("invalid.token.string")
@@ -63,9 +63,13 @@ def test_verify_invalid_token():
 
 def test_verify_expired_token(expired_token):
     """Test verification fails with expired token."""
-    from fastapi import HTTPException
     
     with pytest.raises(HTTPException) as excinfo:
         verify_jwt_token(expired_token)
     
     assert excinfo.value.status_code == 401
+
+@pytest.mark.asyncio
+async def test_get_current_filmuser(valid_token,jwt_test_data):
+    user =  await get_current_filmuser(valid_token)
+    assert user == jwt_test_data["id"]
