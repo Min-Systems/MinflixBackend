@@ -159,3 +159,4 @@ def films_present_config(mock_db_dependencies, mock_db_session):
     """Configure database to have films present."""
     mock_db_session.exec.return_value.first.return_value = MagicMock()  # Films present
     return mock_db_dependencies
+

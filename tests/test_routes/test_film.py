@@ -1,12 +1,13 @@
 #testing film, getfilms, recommendations
-import builtins
+import pytest
 from app.main import app
 from app.core.jwt import get_current_filmuser
+from starlette.responses import FileResponse
 from app.models.user_models import  Profile, WatchHistory
 from unittest.mock import patch, MagicMock
 from pathlib import Path
-
-
+import os
+import tempfile
 
 def test_get_films(client):
     """Test getting all films."""
@@ -81,3 +82,43 @@ def test_film_streaming(client,test_film):
         
         # Check status
         assert response.status_code == 206
+
+def test_image(client, test_film):
+   # Create a real temporary file that will exist for FileResponse
+    with tempfile.NamedTemporaryFile(suffix='.jpg', delete=False) as temp_file:
+        temp_file.write(b"fake image content")
+        temp_file.flush()
+        temp_path = temp_file.name
+        
+        # Get the image name from the test film
+        image_name = test_film.image_name
+        
+        # Key patch: Replace FileResponse with our controlled version
+        from starlette.responses import FileResponse
+        
+        class MockFileResponse(FileResponse):
+            def __init__(self, path, **kwargs):
+                # Use our temp file instead of the requested path
+                super().__init__(temp_path, **kwargs)
+        
+        # Apply the patches
+        with patch("fastapi.responses.FileResponse", MockFileResponse), \
+                patch("app.main.FileResponse", MockFileResponse), \
+                patch("app.main.settings.images_dir", Path("/mocked/images/dir")), \
+                patch("pathlib.Path.exists", return_value=True), \
+                patch("pathlib.Path.resolve", return_value=Path(temp_path)):
+            
+            # Test the endpoint
+            response = client.get(f"/images/{image_name}") 
+    assert response.status_code == 200
+
+
+
+
+
+def test_invalid_image(client):
+    response = client.get("/images/nonexistent.jpg")
+
+        # Verify response
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Invalid image request"
