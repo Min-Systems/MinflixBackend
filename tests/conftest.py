@@ -11,6 +11,7 @@ from app.models.user_models import FilmUser, Profile
 from app.models.film_models import Film
 from app.core.config import Settings
 
+
 # Override the dependency to use the test database
 @pytest.fixture(scope="session")
 def test_engine():
@@ -43,6 +44,7 @@ def client(test_session):
         yield client
     
     app.dependency_overrides.clear()
+
 
 @pytest.fixture
 def test_user(test_session):
